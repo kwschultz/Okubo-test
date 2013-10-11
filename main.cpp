@@ -1,11 +1,72 @@
 #include "QuakeLibOkada.h"
+#include <iostream>
+#include <stdio.h>
+
+//bool custom_isnan(double);
+//double fRand(double,double);
+
+int main() {
+
+	double pie = 3.1415926;
+
+	double _C 	= 1000.0;
+	double _L 	= 10000.0;
+	double _W 	= 10000.0;
+	double _UT	= 0.0;
+	double _US	= 5.0;
+	double _UD	= 0.0;
+	double _DIP	= pie/2.0;
+	double _X	= 10000.0;
+	double _Y	= -2000.0;
+	double _LAMBDA = 1.0;
+	double _MU     = 1.0;
+
+	//cout << "\n\nInput the fault geometry::::";
+	//cout << "\nFault depth [m]: ";
+	//cin  >> _C;
+	//cout << "Fault length [m]: ";
+	//cin  >> _L;
+	//cout << "Fault width [m]:";
+	//cin  >> _W;
+	//cout << "Fault angle [rad]:";
+	//cin  >> _DIP;
+	//cout << "Strike slip [m]:";
+	//cin  >> _US;
+	//cout << "Dip slip [m]:";
+	//cin  >> _UD;
+	//cout << "Tensile slip [m]:";
+	//cin  >> _UT;
+
+	//cout << "\nWhere do you to evaluate the change in gravity?";
+	//cout << "\nX [m]\t:";
+	//cin  >> _X;
+	//cout << "Y [m]\t:";
+	//cin  >> _Y;
+
+    quakelib::Okada     O;
+    double DG           	  = O.dg(_X,_Y,_C,_DIP,_L,_W,_US,_UD,_UT,_LAMBDA,_MU);
+    quakelib::Vec<3> loc;
+    loc[0]=_X;
+    loc[1]=_Y;
+    loc[2]=0.0;
+
+    quakelib::Vec<3> DISPLACE;
+    DISPLACE = O.calc_displacement_vector(loc,_C,_DIP,_L,_W,_US,_UD,_UT,_LAMBDA,_MU);
+
+    double DZ = DISPLACE[2];
+
+    std::cout.precision(3);
+    std::cout << std::scientific;
+    std::cout << "\nx:\t\t" << "y:\t\t" << "dz:\t\t" << "dg:";
+    std::cout << "\n" << _X << "\t" << _Y << "\t" << DZ << "\t" << DG << "\n\n";
+
+    return 0;
+}
+
 
 
 /*
 //==-=-=-=-----------------------------------
-
-bool custom_isnan(double);
-double fRand(double,double);
 
 int main() {
     using namespace quakelib;
@@ -150,16 +211,4 @@ int main() {
     return 1;
 }
 
-
-
-bool custom_isnan(double var) {
-    volatile double d = var;
-    return d != d;
-}
-
-double fRand(double fMin, double fMax)
-{
-    double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
-}
-
+*/

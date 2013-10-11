@@ -100,7 +100,7 @@ def plot_dg(Xmin,Xmax,Xstep,Ymin,Ymax,Ystep,c,dip,L,W,US,UD,UT,LAMBDA,MU):
     return 0
 #-----------------------------------------------------------------------------
 
-plot_dz(_Xmin,_Xmax,_Xstep,_Ymin,_Ymax,_Ystep,_C,_DIP,_L,_W,_US,_UD,_UT,_LAMBDA,_MU)
+#plot_dz(_Xmin,_Xmax,_Xstep,_Ymin,_Ymax,_Ystep,_C,_DIP,_L,_W,_US,_UD,_UT,_LAMBDA,_MU)
 
 
 
