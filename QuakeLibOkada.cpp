@@ -2425,7 +2425,7 @@ double quakelib::Okada::Qp(double _R, double xi, double eta, double _q, double z
     return (3.0 * ctil(_q,eta,z) * ytil(_q,eta))/_R5 + _q * Y32(_R,eta) - (z * Y32(_R,eta) + Z32(_R,_q,eta,z) + Z0(_R,xi,eta,_q,z)) * _cos_o_dip;
 }
 
-//------------------- Below is untested gibberish!!   ---Kasey---
+//------------------- Not 100% verified   ---Kasey---
 // gravity change on the free surface (z=0)
 double quakelib::Okada::dg(double x, double y, double c, double dip, double L, double W, double US, double UD, double UT, double lambda, double mu) {
     OP_CMP(3); OP_MULT(3); OP_ADD(3); OP_SUB(1);
@@ -2437,8 +2437,8 @@ double quakelib::Okada::dg(double x, double y, double c, double dip, double L, d
 	precalc(dip, lambda, mu);
 
     // Everything is in M-K-S units
-    double G   = 0.00000000006738; //Big G gravitation constant
-    double RHO = 2800.0;   //mean crustal density (rough estimate)
+    double G   = 0.000000000066738; //Big G gravitation constant
+    double RHO = 2670.0;   //mean crustal density (rough estimate)
     double B   = 0.00000309; //free-air gravity gradient (taken from Okubo '92)
 
 	double _p = p(y,0.0,c);

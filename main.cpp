@@ -17,7 +17,7 @@ int main() {
 	double _UD	= 0.0;
 	double _DIP	= pie/2.0;
 	double _X	= 10000.0;
-	double _Y	= -2000.0;
+	double _Y	= 5000.0;
 	double _LAMBDA = 1.0;
 	double _MU     = 1.0;
 
