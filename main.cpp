@@ -45,6 +45,8 @@ int main() {
 
     quakelib::Okada     O;
     double DG           	  = O.dg(_X,_Y,_C,_DIP,_L,_W,_US,_UD,_UT,_LAMBDA,_MU);
+    double DG2				  = O.dg2(_X,_Y,_C,_DIP,_L,_W,_US,_UD,_UT,_LAMBDA,_MU);
+
     quakelib::Vec<3> loc;
     loc[0]=_X;
     loc[1]=_Y;
@@ -57,8 +59,8 @@ int main() {
 
     std::cout.precision(3);
     std::cout << std::scientific;
-    std::cout << "\nx:\t\t" << "y:\t\t" << "dz:\t\t" << "dg:";
-    std::cout << "\n" << _X << "\t" << _Y << "\t" << DZ << "\t" << DG << "\n\n";
+    std::cout << "\nx:\t\t" << "y:\t\t" << "dz:\t\t" << "dg:\t\t" << "dg2:";
+    std::cout << "\n" << _X << "\t" << _Y << "\t" << DZ << "\t" << DG << "\t" << DG2 << "\n\n";
 
     return 0;
 }
