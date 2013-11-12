@@ -7,7 +7,7 @@
 
 int main() {
 
-	double pie = 3.1415926;
+	double pie = 3.14159265358979323846;
 
 	double _C 	= 1000.0;
 	double _L 	= 10000.0;
@@ -16,8 +16,8 @@ int main() {
 	double _US	= 5.0;
 	double _UD	= 0.0;
 	double _DIP	= pie/2.0;
-	double _X	= 10000.0;
-	double _Y	= 5000.0;
+	double _X	= 0.0;
+	double _Y	= 0.0;
 	double _LAMBDA = 1.0;
 	double _MU     = 1.0;
 
