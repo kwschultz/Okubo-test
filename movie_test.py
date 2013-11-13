@@ -51,10 +51,7 @@ sys.path.insert(0,"/home/kasey/PyVC/")
 
 
 #---------------- Make histogram of delta g values to get an idea of spread
-evnum 		= 247
-sim_file 	= '../VirtualCalifornia/test/test_dyn-0-5_st-5.h5' 
-
-def get_dg_values(evnum,sim_file):
+def get_dg_field(evnum,sim_file):
 	from pyvc import *
 	from operator import itemgetter
 	from pyvc import vcplots
@@ -81,45 +78,45 @@ def get_dg_values(evnum,sim_file):
 			event_element_data = [event_element_data]
 
 	EF = vcplots.VCGravityField(min_lat, max_lat, min_lon, max_lon, base_lat, base_lon, padding=padding)
-
 	EF.calculate_field_values(event_element_data, event_element_slips, cutoff=cutoff)
-
-	return EF.dG.flatten()
+	return EF,event_data[3]
 
 def plot_dg_hist(evnum,sim_file,Nbins):
-	import pylab as P
+	import numpy as np
+	from matplotlib import pyplot as plt
 	
-	dg = get_dg_values(evnum,sim_file)
+	UNIT 				= pow(10,-8) #microgals
 	
-	n, bins, patches = P.hist(dg, Nbins, normed=1, histtype='stepfilled')
-	P.setp(patches, 'facecolor', 'g', 'alpha', 0.75)
-	P.savefig('local/dg_hist_ev'+evnum+'.png',dpi=200)
-	P.show()
+	event_field,mag		= get_dg_field(evnum,sim_file)
+	dg          		= event_field.dG.flatten()
+	dg_hist,bin_edges 	= np.histogram(dg, bins=100, density=True, normed=True)
 	
-
+	x = np.linspace(bin_edges[0],bin_edges[-1],len(dg_hist))
+	plt.clf()
+	plt.figure()
 	
+	LABEL =	'M = '+str(round(mag,2))
+	plt.plot(x/UNIT,dg_hist,label=LABEL)
+	plt.legend(loc=2)
+	plt.xlabel(r'$\Delta g \ [\mu gal]$')
+	
+	plt.savefig('local/dg_hist_ev'+str(evnum)+'.png',dpi=200)
+	plt.clf()
 
 
 
+#evnums		= [1586,1854,1731,358494,510401]
+#sim_file 	= '/home/kasey/Code/Old_VC/trunk/vcal_webgui/media/ALLCAL2_no-creep_dt-08_st-10.h5'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#evnum 		= 247
+#sim_file 	= '../VirtualCalifornia/test/test_dyn-0-5_st-5.h5' 
 #-----------------------------------------------------------------------------
 if __name__ == "__main__":
-	pass
+	import sys
+	#evnums 		= [247,326,101,269,220]
+	sim_file	= '../VirtualCalifornia/test/test_dyn-0-5_st-5.h5'
+	plot_dg_hist(int(sys.argv[1]),sim_file,100)
+	
 	#do things here with the <args> that you want this to do:
 	#  >>> python movie_test.py <args>
 	
