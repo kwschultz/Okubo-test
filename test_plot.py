@@ -94,7 +94,7 @@ def get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
 
 #-----------------------------------------------------------------------------
 
-def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none'):
+def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none',suff='none'):
     
     dip_deg = round(180.0*dip/np.pi)
     
@@ -119,7 +119,12 @@ def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none'):
         
     f1 = '_'+fault_type+str(int(abs(slip)))+'_dip'+str(int(round(dip_deg)))
     f2 = '_L'+str(int(round(L/1000.0)))+'k_'+'W'+str(int(round(W/1000.0)))+'k'
-    f3 = '_c'+str(int(round(c/1000.0)))+'k.png'
+    f3 = '_c'+str(int(round(c/1000.0)))+'k'
+    
+    if suff != 'none':
+        f3 = f3+'_'+suff+'.png'
+    else:
+        f3 = f3+'.png'
     
     filename = folder+'/'+f0+f1+f2+f3
     return filename,fault_type
@@ -128,7 +133,8 @@ def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none'):
 #-----------------------------------------------------------------------------
 def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
               save=False,DG2=False,DG=True,DZ=False,DH=False,
-              DIFFZ=False,DIFFG=False,CLIMITS=False):
+              DIFFZ=False,DIFFG=False,CLIMITS=False,SUFFIX='none',
+              HIST=False):
     """
     Immutable constants: (hard coded in quakelib/src/QuakeLibOkada.cpp) all MKS
         Free-air gravity gradient (Okubo '92):   Beta = 0.00000309 1/s^2
@@ -149,7 +155,7 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     if DIFFG:
         #        Plot difference between DG and DG2 calculations.
         filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'diff_plots',
-                                           pre='dg-dg2')
+                                           pre='dg-dg2',suff=SUFFIX)
 
         XX,YY,DG    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
                                  c,dip,L,W,US,UD,UT,LAMBDA,MU,DG=True)
@@ -158,11 +164,11 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         Data        = DG - DG2   
         FMT         = '%.2f'    
         UNIT        = pow(10,-8)  #micro gals
-        CLABEL      = r'$\Delta g \ [\mu gal]$'
+        CLABEL      = r'Gravity change $[\mu gal]$'
     elif DIFFZ:
         #        Plot difference between Okubo (DH) and Okada (DZ) vertical displacements
         filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'diff_plots',
-                                              pre='dz-dh')
+                                              pre='dz-dh',suff=SUFFIX)
         
         XX,YY,H     = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,
                                     UT,LAMBDA,MU,DH=True)
@@ -176,18 +182,24 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         #        Plot either DG or DG2
         pre                 = ('dg2' if DG2 else 'dg')
         filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dg_plots',
-                                              pre=pre)
+                                              pre=pre,suff=SUFFIX)
                 
         XX,YY,Data  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
                                  c,dip,L,W,US,UD,UT,LAMBDA,MU,DG2=DG2,DG=DG)
         FMT         = '%i'
         UNIT        = pow(10,-8)  #micro gals
-        CLIM,CMAX   = -50,50
-        CLABEL      = r'$\Delta g \ [\mu gal]$'
+        
+        if fault_type == 'strikeslip':
+            CLIM,CMAX   = -60,60
+        else:
+            CLIM,CMAX   = -300,300
+            
+        #CLABEL      = r'gravity changes $[\mu gal]$'
     else:
          #        Plot either DZ or DH
         pre                 = ('dh' if DH else 'dz')
-        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dz_plots',pre=pre)        
+        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dz_plots',
+                                           pre=pre,suff=SUFFIX)        
         XX,YY,Data  = get_dg_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
                                  c,dip,L,W,US,UD,UT,LAMBDA,MU,DH=DH)
         FMT         = '%.2f'
@@ -195,37 +207,50 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         CLABEL      = r'$\Delta z \ [cm]$'         
     #---------------------------------------------------------
     
+    if HIST:
+        savename = filename.split('.')[0]+'_hist.png'
+        DG_flat  = Data.flatten()/UNIT        
+        plot_dg_hist(DG_flat,savename)
+    
+    
+    
     # Make the figure   
-    BlueRed     = plt.get_cmap('RdBu_r')#color spectrum (neg<->pos)=(blue<->red)
     this_fig    = plt.figure()
     fig_axes    = plt.subplot(111)
     this_img    = plt.imshow(Data/UNIT, origin = 'lower',interpolation='nearest',
                          extent=[Xmin/1000.0,Xmax/1000.0,Ymin/1000.0,
-                                 Ymax/1000.0],cmap=BlueRed)
+                                 Ymax/1000.0],cmap=plt.get_cmap('seismic'))
     
     # Tighten up the axis labels
     img_ax        = this_fig.gca()
-    #img_ax.set_xlabel(r'distance along fault [$km$]',labelpad=-2)
-    #img_ax.set_ylabel(r'distance from fault [$km$]',labelpad=-5)
+    img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1)
+    img_ax.set_ylabel(r'[$km$]',labelpad=-5)
+    
+    forced_ticks  = [int(num) for num in np.linspace(CLIM,CMAX,11)]
     
     # Make color bar and put its label below its x-axis
     divider       = make_axes_locatable(fig_axes)
-    cbar_axis_loc = divider.append_axes("top", size="5%",pad=0.02)                       
+    cbar_ax       = divider.append_axes("top", size="5%",pad=0.02)                       
     cbar          = plt.colorbar(this_img,format=FMT,
-                               orientation='horizontal',cax=cbar_axis_loc)
+                               orientation='horizontal',cax=cbar_ax,
+                               ticks=forced_ticks)
     if CLIMITS:
         plt.clim(CLIM,CMAX)
     
     # Make and position colorbar label
-    cbar_ax     = this_fig.gca()
-    #cbar_ax.set_xlabel(CLABEL,labelpad=-42)
+    #cbar_ax.set_xlabel(CLABEL,labelpad=-46)
     cbar_ax.tick_params(axis='x',labelbottom='off',labeltop='on',
                         bottom='off',top='off',right='off',left='off',
                         pad=-1)
     
-    # TO-DO!!!!!!!!!!!!!!!!!!!
-    #       Modify the outermost ticks, add < and > 
-
+    
+    # Want to change outermost tick labels on colorbar
+    #   from 'VALUE','-VALUE' to '>VALUE' and '<-VALUE'    
+    cb_tick_labs = [str(num) for num in forced_ticks]
+    cb_tick_labs[0] = '<'+cb_tick_labs[0]
+    cb_tick_labs[-1] = '>'+cb_tick_labs[-1]
+    cbar.ax.set_xticklabels(cb_tick_labs)
+      
     # Draw a projection of the fault
     W_proj      = W*np.cos(dip)  #projected width of fault due to dip angle
     fault_proj  = mpl.patches.Rectangle((0.0,0.0),L/1000.0,W_proj/1000.0,
@@ -235,9 +260,27 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     # Save the plot
     if save:
-        plt.savefig(filename,dpi=200)
+        plt.savefig(filename,dpi=300)
         print '>>> plot saved: '+filename
-    plt.show()
+        
+    plt.clf()
+#----------------------------------------------------------------------------- 
+    
+
+def plot_dg_hist(dg_flat,savename,Nbins=100):
+    import numpy as np
+    from matplotlib import pyplot as plt
+    
+    dg_hist,bin_edges     = np.histogram(dg_flat, bins=Nbins, density=True, normed=True)
+    
+    x = np.linspace(bin_edges[0],bin_edges[-1],len(dg_hist))
+    plt.clf()
+    plt.figure()
+    
+    plt.plot(x,dg_hist,color='g')
+    
+    plt.savefig(savename,dpi=200)
+    plt.clf()
             
 #-----------------------------------------------------------------------------
 def plot_dg_vs_uz(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,returns=False):
