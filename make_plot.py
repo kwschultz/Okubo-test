@@ -14,11 +14,11 @@ _UT         = [0.0,0.0,0.0]
 _LAMBDA     = 1.0
 _MU         = 1.0
 #_Xmin,_Xmax = -0.5*_L,1.5*_L  ### Xrange and Yrange must be same
-_Xmin,_Xmax = [-20000.0,-20000.0,-20000.0],[30000.0,30000.0,30000.0]
-_Nx         = 2000.0
+_Xmin,_Xmax = [-10000.0,-10000.0,-10000.0],[20000.0,20000.0,20000.0]
+_Nx         = 100.0
 #_Ymin,_Ymax = -_W,2*_W
-_Ymin,_Ymax = [-25000.0,-20000.0,-20000.0],[25000.0,30000.0,30000.0]
-_Ny         = 2000.0
+_Ymin,_Ymax = [-15000.0,-10000.0,-10000.0],[15000.0,20000.0,20000.0]
+_Ny         = 100.0
 
 ##        SWITCHES
 #*******************
@@ -30,14 +30,17 @@ _DH          = False
 _DIFFG       = False
 _DIFFZ       = False
 _CLIMITS     = True
-_suffix      = 'wide'
+_suffix      = 'proposal'
 _HIST        = True
 #*******************
+test_plot.plot_dg_vs_uz_simple(_Xmin[0],_Xmax[0],_Nx,_Ymin[0],_Ymax[0],_Ny,_C[0],_DIP[0],_L[0],_W[0],_US[0],_UD[0],_UT[0],_LAMBDA,_MU)
+
 
 #=============================================================================
-for k in range(len(_L)):
+"""for k in range(len(_L)):
     test_plot.cbar_plot(_Xmin[k],_Xmax[k],_Nx,_Ymin[k],_Ymax[k],_Ny,_C[k],
                         _DIP[k],_L[k],_W[k],_US[k],_UD[k],_UT[k],
                         _LAMBDA,_MU,save=SAVE,DG2=_DG2,DG=_DG,DZ=_DZ,
                         DH=_DH,DIFFZ=_DIFFZ,DIFFG=_DIFFG,CLIMITS=_CLIMITS,
                         SUFFIX=_suffix,HIST=_HIST)
+"""

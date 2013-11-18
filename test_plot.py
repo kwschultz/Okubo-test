@@ -6,10 +6,15 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import quakelib
 import math
+import os
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.font_manager as mfont
+
+if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
+    os.remove('/home/kasey/.matplotlib/fontList.cache')
 
 #=============================================================================
-def bin_2d(x,y) :
+def bin_2d(x,y,bmin=None,bmax=None,all_vals=False) :
 
     if np.shape(x) != np.shape(y):
         raise NameError('Array shape mismatch, insert coin(s) to continue.')
@@ -24,9 +29,12 @@ def bin_2d(x,y) :
     
     x       = np.array(x)
     y       = np.array(y)
-    bin_min = math.floor(np.min(x))
-    bin_max = math.ceil(np.max(x))
-    bins    = np.linspace(bin_min,bin_max,num=num_bins) 
+    
+    if bmin==None and bmax==None:
+        bmin = math.floor(np.min(x))
+        bmax = math.ceil(np.max(x))
+        
+    bins    = np.linspace(bmin,bmax,num=num_bins) 
     inds    = np.digitize(x, bins)
     x_ave   = []
     y_ave   = []
@@ -38,7 +46,14 @@ def bin_2d(x,y) :
         except KeyError:
             binned_data[iBin] = [y[n]]
 
-    for k in sorted(binned_data.keys()):
+    KEYS = binned_data.keys()
+
+    if all_vals:
+        if 0 in KEYS:
+            x_ave.append(bmin)
+            y_ave.append(sum(binned_data[0])/float(len(binned_data[0])))  
+
+    for k in sorted(KEYS):
         if k != 0:
             if k==len(bins):
                 #Catch the bins that are excluded to the right of the last bin
@@ -48,7 +63,68 @@ def bin_2d(x,y) :
             else:
                 x_ave.append(0.5*(bins[k-1]+bins[k]))
                 y_ave.append(sum(binned_data[k])/float(len(binned_data[k])))    
-    return x_ave, y_ave
+    
+    if all_vals:            
+        if len(bins) in KEYS:
+            x_ave.append(bmax)
+            y_ave.append(sum(binned_data[len(bins)])/float(len(binned_data[len(bins)])))
+                
+
+    return np.array(x_ave), np.array(y_ave)
+#-----------------------------------------------------------------------------
+
+def hist_1d(x,bmin=None,bmax=None,norm=False,num_bins=100):
+    x       = np.array(x)
+
+    if bmin==None and bmax==None:
+        bmin = math.floor(np.min(x))
+        bmax = math.ceil(np.max(x)) 
+        
+    bins    = np.linspace(bmin,bmax,num=num_bins) 
+    inds    = np.digitize(x, bins)
+    x_ave   = []
+    count   = []
+    binned_data = {}
+
+    for n, iBin in enumerate(inds):
+        try:
+            binned_data[iBin].append(x[n])
+        except KeyError:
+            binned_data[iBin] = [x[n]]
+
+
+    KEYS    = binned_data.keys()
+    # Put values below minimum bin into first bin
+    if 0 in KEYS:
+        x_ave.append(bmin)
+        count.append(len(binned_data[0]))  
+    
+    for k in sorted(KEYS):
+        if k!=0:
+            if k<len(bins):
+                x_ave.append(0.5*(bins[k-1]+bins[k]))            
+                count.append(len(binned_data[k]))
+                
+    # Put values above maximum bin into last bin             
+    if len(bins) in KEYS:
+        x_ave.append(bmax)
+        count.append(float(len(binned_data[len(bins)])))
+                           
+    x_ave = np.array(x_ave)
+    count = np.array(count)
+    
+    if norm:
+        count /= float(len(x)) 
+           
+    return x_ave,count
+
+#-----------------------------------------------------------------------------
+def get_slope_intercept(x,y):
+    from scipy import stats
+  
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+
+    return slope,intercept
 
 #-----------------------------------------------------------------------------
 def get_linspaces(Xmin,Xmax,Nx,Ymin,Ymax,Ny):
@@ -190,9 +266,13 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         UNIT        = pow(10,-8)  #micro gals
         
         if fault_type == 'strikeslip':
-            CLIM,CMAX   = -60,60
+            CMIN,CMAX   = -50,50
+        elif fault_type == 'thrust':
+            CMIN,CMAX   = -500,500
+        elif fault_type == 'normal':
+            CMIN,CMAX   = -500,500
         else:
-            CLIM,CMAX   = -300,300
+            CMIN,CMAX   = -400,400
             
         #CLABEL      = r'gravity changes $[\mu gal]$'
     else:
@@ -223,10 +303,10 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     # Tighten up the axis labels
     img_ax        = this_fig.gca()
-    img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1)
-    img_ax.set_ylabel(r'[$km$]',labelpad=-5)
+    #img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1)
+    #img_ax.set_ylabel(r'[$km$]',labelpad=-5)
     
-    forced_ticks  = [int(num) for num in np.linspace(CLIM,CMAX,11)]
+    forced_ticks  = [int(num) for num in np.linspace(CMIN,CMAX,11)]
     
     # Make color bar and put its label below its x-axis
     divider       = make_axes_locatable(fig_axes)
@@ -235,7 +315,7 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
                                orientation='horizontal',cax=cbar_ax,
                                ticks=forced_ticks)
     if CLIMITS:
-        plt.clim(CLIM,CMAX)
+        plt.clim(CMIN,CMAX)
     
     # Make and position colorbar label
     #cbar_ax.set_xlabel(CLABEL,labelpad=-46)
@@ -267,7 +347,7 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
 #----------------------------------------------------------------------------- 
     
 
-def plot_dg_hist(dg_flat,savename,Nbins=100):
+"""def plot_dg_hist(dg_flat,savename,Nbins=100):
     import numpy as np
     from matplotlib import pyplot as plt
     
@@ -281,24 +361,27 @@ def plot_dg_hist(dg_flat,savename,Nbins=100):
     
     plt.savefig(savename,dpi=200)
     plt.clf()
-            
+"""            
 #-----------------------------------------------------------------------------
-def plot_dg_vs_uz(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,returns=False):
-    from pyvc import vcplots
+def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU):
+    from pyvc import vcutils
     import os
     
+    ticklabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=9)
+    framelabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
+    legendfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
+    
+    
     # Need to remove a cached file for Arial fonts to be used
-    if os.path.exists('/home/kasey/.matplotlib/fontList.cache'):
+    if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
         os.remove('/home/kasey/.matplotlib/fontList.cache')
         
-    UNIT        = float(pow(10,-8))  # 1 microgal in mks units is 10^(-8) m/s^2
+    UNIT       = float(pow(10,-8))  # 1 microgal in mks units is 10^(-8) m/s^2
     
-    XX,YY,DG    = get_dg_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,DG2=True)
-    dum,dum,DZ  = get_dz_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
+    dum,dum,DG    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,DG=True)
+    dum,dum,DZ  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,DZ=True)
     
     del(dum)
-    del(XX)
-    del(YY)
     
                     ## In units of microgals
     DG_flat = DG.flatten()/UNIT
@@ -306,14 +389,7 @@ def plot_dg_vs_uz(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,returns
     
     del(DG)
     del(DZ)
-    
-    #DG      = np.array([okada.dg(x,y,c,dip,L,W,US,UD,UT,LAMBDA,MU) for x,y in zip(X,Y)])/UNIT
-    #UZ      = np.array([okada.calc_displacement_vector(quakelib.Vec3(x,y,0.0),c,dip,L,W,US,UD,UT,LAMBDA,MU)[2] for x,y in zip(X,Y)])
-
-    #x_ave,y_ave = vcutils.calculate_averages(UZ,DG)
-    x_ave,y_ave = bin_2d(DZ_flat,DG_flat)
-    
-    
+       
     fault_type = ""
     if US!=0.0:
         fault_type = "strikeslip"
@@ -331,26 +407,179 @@ def plot_dg_vs_uz(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,returns
         
     dip_deg     = round(dip*180.0/np.pi)
 
-    res = (Xmax-Xmin)/float(Nx)
-
-    output_file = "/home/kasey/Okubo-test/dg2_vs_uz_"+fault_type+"_c%ikm_L%ikm_W%ikm_dip%i_%im.png"%(c/1000.0,L/1000.0,W/1000.0,dip_deg,res)
-    Plot_Label  = r"$\Delta$g vs. height change: "+plot_lab+" c=%ikm L=%ikm W=%ikm dip=%i$^\circ$"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
+    output_file = "/home/kasey/Okubo-test/dg_vs_uz/"+fault_type+"_c%ikm_L%ikm_W%ikm_dip%i.png"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
+    #Plot_Label  = r"$\Delta$g vs. height change: "+plot_lab+" c=%ikm L=%ikm W=%ikm dip=%i$^\circ$"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
 
     #Before plotting, clear the current axis and figure
-    plt.cla()
     plt.clf()
+    
+    x_ave,y_ave     = bin_2d(DZ_flat,DG_flat)
+    
+    slope,intercept = get_slope_intercept(x_ave,y_ave)
+    y_fit           = slope*x_ave + intercept   
 
-    vcplots.standard_plot(output_file,DZ_flat,DG_flat,
+    fit_label       = 'slope = {:.3f}'.format(slope)
+
+    XLABEL = r'height change $[m]$'
+    YLABEL = r'gravity change $[\mu gal]$'
+
+    plt.plot(DZ_flat,DG_flat,'.',c='k')
+    plt.plot(x_ave,y_fit,c='grey',label=fit_label,lw=5)
+    this_ax = plt.gca()
+    
+    for label in this_ax.xaxis.get_ticklabels()+this_ax.yaxis.get_ticklabels():
+        label.set_fontproperties(ticklabelfont)
+    
+    
+    this_ax.set_xlabel(XLABEL, fontproperties=framelabelfont)
+    this_ax.set_ylabel(YLABEL, fontproperties=framelabelfont)
+    
+    this_ax.legend(loc=1,frameon=False,prop=legendfont)
+    plt.savefig(output_file,dpi=200)
+
+    """vcutils.standard_plot(output_file,DZ_flat,DG_flat,
         axis_format='plot',
         add_lines=[{'label':'binned average', 'x':x_ave, 'y':y_ave}],
         axis_labels = {'x':'vertical displacement [m]', 'y':r'gravity change [$\mu$gal]'},
         plot_label=Plot_Label
-    )       
-    if returns:
-        return DZ_flat,DG_flat,x_ave,y_ave
-#-----------------------------------------------------------------------------    
+    )      
+    """
+    
+#-----------------------------------------------------------------------------
+
+def get_dg_field(evnum,sim_file):
+    from pyvc import *
+    from operator import itemgetter
+    from pyvc import vcplots
+    import sys
+    
+    output_directory        = 'animation_test_g/'
+    field_values_directory  = '{}field_values/'.format(output_directory)
+    
+    padding = 0.01
+    cutoff    = None
+
+    with VCSimData() as sim_data:
+        sim_data.open_file(sim_file)    
+        events = VCEvents(sim_data)
+        geometry = VCGeometry(sim_data)
+        min_lat = geometry.min_lat
+        max_lat = geometry.max_lat
+        min_lon = geometry.min_lon
+        max_lon = geometry.max_lon
+        base_lat = geometry.base_lat
+        base_lon = geometry.base_lon
+        event_data = events[evnum]
+        
+    
+        EF = vcplots.VCGravityField(min_lat, max_lat, min_lon, max_lon, base_lat, base_lon, padding=padding)
+            
+        field_values_loaded = EF.load_field_values('{}{}_'.format(field_values_directory, evnum))
+    
+    if field_values_loaded:
+        sys.stdout.write('loaded'.format(evnum))
+        # If they havent been saved then we need to calculate them
+    elif not field_values_loaded:
+        sys.stdout.write('processing '.format(evnum))
+        sys.stdout.flush()
+                        
+        event_element_slips = events.get_event_element_slips(evnum)
+        ele_getter = itemgetter(*event_element_slips.keys())
+        event_element_data = ele_getter(geometry)
+        if len(event_element_slips) == 1:
+            event_element_data = [event_element_data]
+                        
+        sys.stdout.write('{} elements :: '.format(len(event_element_slips)))
+        sys.stdout.flush()
+                        
+        EF.calculate_field_values(
+            event_element_data,
+            event_element_slips,
+            cutoff=cutoff,
+            save_file_prefix='{}{}_'.format(field_values_directory, evnum)
+        )
+    return EF,event_data[3]
+#-----------------------------------------------------------------------------
+
+def plot_dg_hist(evnum,sim_file,bin_min=-30.0,bin_max=-30.0,NUM_BINS=100,NORM=False):
+    from matplotlib import pyplot as plt
+    
+    UNIT             = pow(10,-8) #microgals
+    event_field,mag  = get_dg_field(evnum,sim_file)
+    dg               = event_field.dG.flatten()/UNIT
+    
+    dg_bin_vals,counts = hist_1d(dg,bmin=bin_min,bmax=bin_max,norm=NORM,num_bins=NUM_BINS) 
+       
+    LABEL =    'M = '+str(round(mag,2))
+    plt.plot(dg_bin_vals,counts,label=LABEL,color='k')
+    plt.tick_params(axis='y',bottom='off',top='off',left='off',right='off',
+                labelbottom='off',labeltop='off',labelleft='off',labelright='off')
+    plt.tick_params(axis='x',top='off',bottom='off')
+    plt.legend(loc=2)
+    img_ax        = plt.gca()
+    img_ax.set_xlabel(r'Gravity change $[\mu gal]$',labelpad=-1)
+    
+    #plt.savefig('local/dg_hist_ev'+str(evnum)+'.png',dpi=200)
+    #plt.clf()
+    plt.show()
+#-----------------------------------------------------------------------------
+    
+def plot_dg_hist_inset(evnum,sim_file,DG_MIN=-30.0,DG_MAX=30.0,NUM_BINS=100):
+    from pyvc import vcplots
+    from matplotlib import pyplot as plt
+    #******************************************
+    #evnum = 109382
+    #sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
+    #*******************************************
+    out_file      = 'local/dg_field_{}_hist_inset.png'.format(evnum)
+    this_fig      = vcplots.plot_event_field(sim_file,evnum,output_file=out_file,
+                        save_file_prefix='animation_test_g/field_values/'+str(evnum)+'_',
+                        field_type='gravity')
+    
+    UNIT                = pow(10,-8) #microgals
+    
+    # Width and height are fixed
+    ph = 768.0
+    pw = 1024.0
+    width_frac = 200.0/pw
+    height_frac = 150.0/ph
+    left_frac = 130.0/pw
+    bottom_frac = 100.0/ph    
+    
+    event_field,mag     = get_dg_field(evnum,sim_file)
+    dg                  = event_field.dG.flatten()/UNIT
+    dg_binned,counts    = hist_1d(dg,bmin=DG_MIN,bmax=DG_MAX,num_bins=NUM_BINS,norm=True)
+    
+    LABEL   = r'$M={}$'.format(str(round(mag,1)))
+    
+    hist_inset = this_fig.add_axes((left_frac,bottom_frac,width_frac,height_frac))
+    
+    hist_inset.plot(dg_binned,counts,color='k')
+    hist_inset.tick_params(axis='y',bottom='off',top='off',left='off',right='off',
+                labelbottom='off',labeltop='off',labelleft='off',labelright='off')
+    hist_inset.tick_params(axis='x', labelsize='small')
+    #hist_inset.tick_params(axis='x',top='off',bottom='off')
+    
+    #  Make first and last ticks be <MIN and >MAX
+    #tick_labels = [item.get_text() for item in hist_inset.get_xticklabels()]
+    #tick_labels[0] = '<'+tick_labels[0]
+    #tick_labels[-1] = '>'+tick_labels[-1]
+    #hist_inset.set_xticklabels(tick_labels)
+        
+    #hist_inset.legend(loc=2,frameon=False,numpoints=1,handlelength=0,handletextpad=0)
+    hist_inset.patch.set_alpha(0.0)
+    
+    this_fig.savefig(out_file,dpi=200)
+    plt.clf()
 
 
+
+#evnum = 109382
+#sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
+#DG_MIN,DG_MAX = -30.0,30.0
+#NBIN          = 100
+#binner = np.linspace(DG_MIN,DG_MAX,NBIN)
+#plot_dg_hist(evnum,sim_file,BINS=binner)
 #=============================================================================
 #=============================================================================
 #--DEPRECATED OR OLD----------------------------------------------------------
