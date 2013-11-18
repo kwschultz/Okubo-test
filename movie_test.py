@@ -2,6 +2,10 @@
 import time
 import sys
 import numpy as np
+import os
+
+if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
+    os.remove('/home/kasey/.matplotlib/fontList.cache')
 
 sys.path.insert(0,"/home/kasey/PyVC/")
 

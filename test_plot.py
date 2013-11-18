@@ -210,10 +210,19 @@ def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none',suff='none'):
 def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
               save=False,DG2=False,DG=True,DZ=False,DH=False,
               DIFFZ=False,DIFFG=False,CLIMITS=False,SUFFIX='none',
-              HIST=False):
+              HIST=False,SHOW=False):
+    
+    # Need to remove a cached file for Arial fonts to be used
+    if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
+        os.remove('/home/kasey/.matplotlib/fontList.cache')
+    
+    ticklabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=9)
+    framelabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
+    
     """
     Immutable constants: (hard coded in quakelib/src/QuakeLibOkada.cpp) all MKS
         Free-air gravity gradient (Okubo '92):   Beta = 0.00000309 1/s^2
+                                                      = 309 microgal/m
         Constant crustal density:                Rho  = 2670.0 kg/m^3
         Gravitational constant:                  G    = 0.000000000066738
     
@@ -267,21 +276,25 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         
         if fault_type == 'strikeslip':
             CMIN,CMAX   = -50,50
+            #plot_lab    = "Strike-slip"
         elif fault_type == 'thrust':
             CMIN,CMAX   = -500,500
+            #plot_lab    = "Thrust"
         elif fault_type == 'normal':
             CMIN,CMAX   = -500,500
+            #plot_lab    = "Normal"
         else:
             CMIN,CMAX   = -400,400
+            #plot_lab    = "Tensile"
             
-        #CLABEL      = r'gravity changes $[\mu gal]$'
+        CLABEL      = r'gravity changes $[\mu gal]$'
     else:
          #        Plot either DZ or DH
         pre                 = ('dh' if DH else 'dz')
         filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dz_plots',
                                            pre=pre,suff=SUFFIX)        
-        XX,YY,Data  = get_dg_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
-                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DH=DH)
+        XX,YY,Data  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
+                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DH=DH,DZ=DZ)
         FMT         = '%.2f'
         UNIT        = pow(10,-2)  # centimeters  
         CLABEL      = r'$\Delta z \ [cm]$'         
@@ -303,8 +316,8 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     # Tighten up the axis labels
     img_ax        = this_fig.gca()
-    #img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1)
-    #img_ax.set_ylabel(r'[$km$]',labelpad=-5)
+    img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1, fontproperties=framelabelfont)
+    img_ax.set_ylabel(r'[$km$]',labelpad=-5, fontproperties=framelabelfont)
     
     forced_ticks  = [int(num) for num in np.linspace(CMIN,CMAX,11)]
     
@@ -318,10 +331,9 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         plt.clim(CMIN,CMAX)
     
     # Make and position colorbar label
-    #cbar_ax.set_xlabel(CLABEL,labelpad=-46)
+    cbar_ax.set_xlabel(CLABEL,labelpad=-40, fontproperties=framelabelfont)
     cbar_ax.tick_params(axis='x',labelbottom='off',labeltop='on',
-                        bottom='off',top='off',right='off',left='off',
-                        pad=-1)
+                        bottom='off',top='off',right='off',left='off',pad=-0.5)
     
     
     # Want to change outermost tick labels on colorbar
@@ -330,6 +342,13 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     cb_tick_labs[0] = '<'+cb_tick_labs[0]
     cb_tick_labs[-1] = '>'+cb_tick_labs[-1]
     cbar.ax.set_xticklabels(cb_tick_labs)
+      
+      
+    for label in img_ax.xaxis.get_ticklabels()+img_ax.yaxis.get_ticklabels():
+        label.set_fontproperties(framelabelfont)  
+        
+    for label in cbar_ax.xaxis.get_ticklabels()+cbar_ax.yaxis.get_ticklabels():
+        label.set_fontproperties(ticklabelfont)        
       
     # Draw a projection of the fault
     W_proj      = W*np.cos(dip)  #projected width of fault due to dip angle
@@ -343,26 +362,14 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         plt.savefig(filename,dpi=300)
         print '>>> plot saved: '+filename
         
+    if SHOW:
+        plt.show()
+        
     plt.clf()
 #----------------------------------------------------------------------------- 
-    
 
-"""def plot_dg_hist(dg_flat,savename,Nbins=100):
-    import numpy as np
-    from matplotlib import pyplot as plt
-    
-    dg_hist,bin_edges     = np.histogram(dg_flat, bins=Nbins, density=True, normed=True)
-    
-    x = np.linspace(bin_edges[0],bin_edges[-1],len(dg_hist))
-    plt.clf()
-    plt.figure()
-    
-    plt.plot(x,dg_hist,color='g')
-    
-    plt.savefig(savename,dpi=200)
-    plt.clf()
-"""            
-#-----------------------------------------------------------------------------
+
+
 def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU):
     from pyvc import vcutils
     import os
@@ -370,6 +377,7 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
     ticklabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=9)
     framelabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
     legendfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
+    titlefont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=12)
     
     
     # Need to remove a cached file for Arial fonts to be used
@@ -392,8 +400,8 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
        
     fault_type = ""
     if US!=0.0:
-        fault_type = "strikeslip"
-        plot_lab   = "Strike Slip"
+        fault_type == "strikeslip"
+        plot_lab   = "Strike-slip"
     if UD!=0.0:
         if UD>0:
             fault_type = "thrust"
@@ -407,7 +415,7 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
         
     dip_deg     = round(dip*180.0/np.pi)
 
-    output_file = "/home/kasey/Okubo-test/dg_vs_uz/"+fault_type+"_c%ikm_L%ikm_W%ikm_dip%i.png"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
+    output_file = "/home/kasey/Okubo-test/dg_vs_uz/dg_dz_"+fault_type+"_c%ikm_L%ikm_W%ikm_dip%i.png"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
     #Plot_Label  = r"$\Delta$g vs. height change: "+plot_lab+" c=%ikm L=%ikm W=%ikm dip=%i$^\circ$"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
 
     #Before plotting, clear the current axis and figure
@@ -424,8 +432,12 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
     YLABEL = r'gravity change $[\mu gal]$'
 
     plt.plot(DZ_flat,DG_flat,'.',c='k')
-    plt.plot(x_ave,y_fit,c='grey',label=fit_label,lw=5)
+    plt.plot(x_ave,y_fit,c='grey',label=fit_label,lw=2)
     this_ax = plt.gca()
+    
+
+    
+    this_ax.set_title(plot_lab, fontproperties=titlefont)
     
     for label in this_ax.xaxis.get_ticklabels()+this_ax.yaxis.get_ticklabels():
         label.set_fontproperties(ticklabelfont)
@@ -583,6 +595,22 @@ def plot_dg_hist_inset(evnum,sim_file,DG_MIN=-30.0,DG_MAX=30.0,NUM_BINS=100):
 #=============================================================================
 #=============================================================================
 #--DEPRECATED OR OLD----------------------------------------------------------
+"""def plot_dg_hist(dg_flat,savename,Nbins=100):
+    import numpy as np
+    from matplotlib import pyplot as plt
+    
+    dg_hist,bin_edges     = np.histogram(dg_flat, bins=Nbins, density=True, normed=True)
+    
+    x = np.linspace(bin_edges[0],bin_edges[-1],len(dg_hist))
+    plt.clf()
+    plt.figure()
+    
+    plt.plot(x,dg_hist,color='g')
+    
+    plt.savefig(savename,dpi=200)
+    plt.clf()
+"""      
+#=============================================================================
 """
 def plot_dg(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
             c,dip,L,W,US,UD,UT,LAMBDA,MU,DG2=False,save=False,DIFF=False):
