@@ -29,7 +29,7 @@ sys.path.insert(0,"/home/kasey/PyVC/")
 evnum = 109382
 sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 #*******************************************
-out_file      = 'local/dg_field_{}_fixframe3.png'.format(evnum)
+out_file      = 'local/dg_field_{}_test.png'.format(evnum)
 vcplots.plot_event_field(sim_file,evnum,output_file=out_file,
 						save_file_prefix='animation_test_g/field_values/'+str(evnum)+'_',
 						field_type='gravity')
@@ -55,7 +55,7 @@ event_range={'type':'year','filter':(start_year,end_year)}
 #animation_target_length is in seconds
 #animation_fps is frames per second
 vcplots.event_field_animation(sim_file,output_directory,event_range,animation_target_length=60.0,
-							animation_fps=30.0,field_type='gravity',force_plot=True)
+							animation_fps=30.0,field_type='gravity',force_plot=False)
 
 print "Total time - {} seconds".format(time.time()-start_time)
 

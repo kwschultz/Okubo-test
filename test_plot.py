@@ -370,7 +370,8 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
 
 
 
-def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU):
+def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
+                         LABELS=False,SUFFIX='none'):
     from pyvc import vcutils
     import os
     
@@ -386,7 +387,7 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
         
     UNIT       = float(pow(10,-8))  # 1 microgal in mks units is 10^(-8) m/s^2
     
-    dum,dum,DG    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,DG=True)
+    dum,dum,DG  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,DG=True)
     dum,dum,DZ  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,DZ=True)
     
     del(dum)
@@ -398,25 +399,30 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
     del(DG)
     del(DZ)
        
-    fault_type = ""
-    if US!=0.0:
-        fault_type == "strikeslip"
+    if US>0.0:
+        fault_type = "strikeslip"
         plot_lab   = "Strike-slip"
-    if UD!=0.0:
+    if UD>0.0:
         if UD>0:
             fault_type = "thrust"
             plot_lab   = "Thrust"
         if UD<0:
             fault_type = "normal"
             plot_lab   = "Normal"
-    if UT!=0.0:
+    if UT>0.0:
         fault_type = "tensile"
         plot_lab   = "Tensile"
         
-    dip_deg     = round(dip*180.0/np.pi)
+    dip_deg     = int(round(dip*180.0/np.pi))
+    
+    CC = int(round(c/1000.0))
+    LL = int(round(L/1000.0))
+    WW = int(round(W/1000.0))
 
-    output_file = "/home/kasey/Okubo-test/dg_vs_uz/dg_dz_"+fault_type+"_c%ikm_L%ikm_W%ikm_dip%i.png"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
-    #Plot_Label  = r"$\Delta$g vs. height change: "+plot_lab+" c=%ikm L=%ikm W=%ikm dip=%i$^\circ$"%(c/1000.0,L/1000.0,W/1000.0,dip_deg)
+    if SUFFIX is not 'none':
+        output_file = "/home/kasey/Okubo-test/dg_vs_uz/dg_dz_{}_c{}km_L{}km_W{}km_dip{}_{}.png".format(fault_type,CC,LL,WW,dip_deg,SUFFIX)
+    else:
+        output_file = "/home/kasey/Okubo-test/dg_vs_uz/dg_dz_{}_c{}km_L{}km_W{}km_dip{}.png".format(fault_type,CC,LL,WW,dip_deg)
 
     #Before plotting, clear the current axis and figure
     plt.clf()
@@ -428,23 +434,20 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
 
     fit_label       = 'slope = {:.3f}'.format(slope)
 
-    XLABEL = r'height change $[m]$'
-    YLABEL = r'gravity change $[\mu gal]$'
-
     plt.plot(DZ_flat,DG_flat,'.',c='k')
     plt.plot(x_ave,y_fit,c='grey',label=fit_label,lw=2)
     this_ax = plt.gca()
-    
-
     
     this_ax.set_title(plot_lab, fontproperties=titlefont)
     
     for label in this_ax.xaxis.get_ticklabels()+this_ax.yaxis.get_ticklabels():
         label.set_fontproperties(ticklabelfont)
     
-    
-    this_ax.set_xlabel(XLABEL, fontproperties=framelabelfont)
-    this_ax.set_ylabel(YLABEL, fontproperties=framelabelfont)
+    if LABELS:    
+        XLABEL  = r'vertical displacement $[m]$'
+        YLABEL  = r'gravity change $[\mu gal]$'
+        this_ax.set_xlabel(XLABEL, fontproperties=framelabelfont)
+        this_ax.set_ylabel(YLABEL, fontproperties=framelabelfont)
     
     this_ax.legend(loc=1,frameon=False,prop=legendfont)
     plt.savefig(output_file,dpi=200)
@@ -457,9 +460,70 @@ def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU)
     )      
     """
     
+#----------------------------------------------------------------------------- 
+def plot_dg_vs_uz_event(evnum,sim_file):
+    from pyvc import vcutils
+    import os
+    
+    ticklabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=9)
+    framelabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
+    legendfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
+    titlefont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=12)
+        
+    # Need to remove a cached file for Arial fonts to be used
+    if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
+        os.remove('/home/kasey/.matplotlib/fontList.cache')
+    
+    # get the gravity field of the event
+    UNIT     = pow(10,-8) #microgals
+    dg_field,mag,slip,num_elem = get_field(evnum,sim_file,
+                                                    field_type='gravity',
+                                                    mag=True,avg_slip=True,
+                                                    num_elem=True)
+    dg       = dg_field.dG.flatten()/UNIT
+    
+    # get the vertical displacement field of the event
+    dz_field = get_field(evnum,sim_file,field_type='displacement')       
+    dz       = dz_field.dZ.flatten()
+       
+    #Before plotting, clear the current axis and figure
+    plt.clf()
+    
+    # binning and fitting
+    x_ave,y_ave     = bin_2d(dz,dg)
+    slope,intercept = get_slope_intercept(x_ave,y_ave)
+    y_fit           = slope*x_ave + intercept   
+    fit_label       = 'slope = {:.3f}'.format(slope)
+
+    # plot the raw and binned & fitted data
+    plt.plot(dz,dg,'.',c='k')
+    plt.plot(x_ave,y_fit,c='grey',label=fit_label,lw=2)
+    this_ax = plt.gca()
+    
+        
+    # font and labels
+    PLOT_LABEL  = 'Magnitude {:.2f} event, {} fault elements, avg. slip = {:.2f}m'.format(mag,slip,num_elem)
+    XLABEL      = r'height change $[m]$'
+    YLABEL      = r'gravity change $[\mu gal]$'  
+    
+    this_ax.set_title(PLOT_LABEL, fontproperties=titlefont)
+    
+    for label in this_ax.xaxis.get_ticklabels()+this_ax.yaxis.get_ticklabels():
+        label.set_fontproperties(ticklabelfont)
+    
+    this_ax.set_xlabel(XLABEL, fontproperties=framelabelfont)
+    this_ax.set_ylabel(YLABEL, fontproperties=framelabelfont)
+    
+    this_ax.legend(loc=1,frameon=False,prop=legendfont)
+    
+    # Saving
+    output_file = "/home/kasey/Okubo-test/dg_vs_uz/dg_dz_{}.png".format(evnum)
+    plt.savefig(output_file,dpi=200)   
 #-----------------------------------------------------------------------------
 
-def get_dg_field(evnum,sim_file):
+
+def get_field(evnum,sim_file,field_type='gravity',mag=False,avg_slip=False,
+              num_secs=False,num_elem=False):
     from pyvc import *
     from operator import itemgetter
     from pyvc import vcplots
@@ -468,57 +532,79 @@ def get_dg_field(evnum,sim_file):
     output_directory        = 'animation_test_g/'
     field_values_directory  = '{}field_values/'.format(output_directory)
     
-    padding = 0.01
+    padding   = 0.01
     cutoff    = None
 
     with VCSimData() as sim_data:
         sim_data.open_file(sim_file)    
-        events = VCEvents(sim_data)
-        geometry = VCGeometry(sim_data)
-        min_lat = geometry.min_lat
-        max_lat = geometry.max_lat
-        min_lon = geometry.min_lon
-        max_lon = geometry.max_lon
-        base_lat = geometry.base_lat
-        base_lon = geometry.base_lon
-        event_data = events[evnum]
+        events              = VCEvents(sim_data)
+        geometry            = VCGeometry(sim_data)
+        min_lat             = geometry.min_lat
+        max_lat             = geometry.max_lat
+        min_lon             = geometry.min_lon
+        max_lon             = geometry.max_lon
+        base_lat            = geometry.base_lat
+        base_lon            = geometry.base_lon
+        event_data          = events[evnum]
+        event_element_slips = events.get_event_element_slips(evnum)
+        event_sections      = geometry.sections_with_elements(event_element_slips.keys())
+                
+        if field_type=='gravity':
+            EF = vcplots.VCGravityField(min_lat, max_lat, min_lon, max_lon, base_lat, base_lon, padding=padding)
+        else:
+            EF = vcplots.VCDisplacementField(min_lat, max_lat, min_lon, max_lon, base_lat, base_lon, padding=padding)
+                
+        field_values_loaded = EF.load_field_values('{}{}_'.format(field_values_directory, evnum))
         
     
-        EF = vcplots.VCGravityField(min_lat, max_lat, min_lon, max_lon, base_lat, base_lon, padding=padding)
-            
-        field_values_loaded = EF.load_field_values('{}{}_'.format(field_values_directory, evnum))
+        if field_values_loaded:
+            sys.stdout.write('loaded'.format(evnum))
+            # If they havent been saved then we need to calculate them
+        elif not field_values_loaded:
+            sys.stdout.write('processing '.format(evnum))
+            sys.stdout.flush()
+                        
+            ele_getter = itemgetter(*event_element_slips.keys())
+            event_element_data = ele_getter(geometry)
+            if len(event_element_slips) == 1:
+                event_element_data = [event_element_data]
+                        
+            sys.stdout.write('{} elements :: '.format(len(event_element_slips)))
+            sys.stdout.flush()
+                        
+            EF.calculate_field_values(
+                                      event_element_data,
+                                      event_element_slips,
+                                      cutoff=cutoff,
+                                      save_file_prefix='{}{}_'.format(field_values_directory, evnum)
+                                      )
     
-    if field_values_loaded:
-        sys.stdout.write('loaded'.format(evnum))
-        # If they havent been saved then we need to calculate them
-    elif not field_values_loaded:
-        sys.stdout.write('processing '.format(evnum))
-        sys.stdout.flush()
-                        
-        event_element_slips = events.get_event_element_slips(evnum)
-        ele_getter = itemgetter(*event_element_slips.keys())
-        event_element_data = ele_getter(geometry)
-        if len(event_element_slips) == 1:
-            event_element_data = [event_element_data]
-                        
-        sys.stdout.write('{} elements :: '.format(len(event_element_slips)))
-        sys.stdout.flush()
-                        
-        EF.calculate_field_values(
-            event_element_data,
-            event_element_slips,
-            cutoff=cutoff,
-            save_file_prefix='{}{}_'.format(field_values_directory, evnum)
-        )
-    return EF,event_data[3]
+    '{} elements in {} sections : '.format(len(event_element_slips), len(event_sections))
+    
+    
+    if mag or avg_slip or num_secs or num_elem:
+        returning = []
+        returning.append(EF)
+        if mag:
+            returning.append(event_data[3])
+        if avg_slip:
+            returning.append(event_data[13])
+        if num_secs:
+            returning.append(len(event_element_slips))
+        if num_elem:
+            returning.append(len(event_sections))
+        
+        return returning
+    else:
+        return EF
 #-----------------------------------------------------------------------------
 
 def plot_dg_hist(evnum,sim_file,bin_min=-30.0,bin_max=-30.0,NUM_BINS=100,NORM=False):
     from matplotlib import pyplot as plt
     
-    UNIT             = pow(10,-8) #microgals
-    event_field,mag  = get_dg_field(evnum,sim_file)
-    dg               = event_field.dG.flatten()/UNIT
+    UNIT        = pow(10,-8) #microgals
+    event_field = get_field(evnum,sim_file,field_type='gravity')
+    dg          = event_field.dG.flatten()/UNIT
     
     dg_bin_vals,counts = hist_1d(dg,bmin=bin_min,bmax=bin_max,norm=NORM,num_bins=NUM_BINS) 
        
@@ -544,6 +630,8 @@ def plot_dg_hist_inset(evnum,sim_file,DG_MIN=-30.0,DG_MAX=30.0,NUM_BINS=100):
     #sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
     #*******************************************
     out_file      = 'local/dg_field_{}_hist_inset.png'.format(evnum)
+    
+    # For this vvv to work you must go to vcplots and make this method return the figure
     this_fig      = vcplots.plot_event_field(sim_file,evnum,output_file=out_file,
                         save_file_prefix='animation_test_g/field_values/'+str(evnum)+'_',
                         field_type='gravity')
