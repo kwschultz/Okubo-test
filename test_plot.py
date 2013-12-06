@@ -53,7 +53,7 @@ def bin_2d(x,y,bmin=None,bmax=None,all_vals=False) :
             x_ave.append(bmin)
             y_ave.append(sum(binned_data[0])/float(len(binned_data[0])))  
 
-    for k in sorted(KEYS):
+    """for k in sorted(KEYS):
         if k != 0:
             if k==len(bins):
                 #Catch the bins that are excluded to the right of the last bin
@@ -63,7 +63,13 @@ def bin_2d(x,y,bmin=None,bmax=None,all_vals=False) :
             else:
                 x_ave.append(0.5*(bins[k-1]+bins[k]))
                 y_ave.append(sum(binned_data[k])/float(len(binned_data[k])))    
-    
+    """
+    for k in sorted(KEYS):
+        if k>0 and k < len(bins):
+                x_ave.append(0.5*(bins[k-1]+bins[k]))
+                y_ave.append(sum(binned_data[k])/float(len(binned_data[k])))
+            
+
     if all_vals:            
         if len(bins) in KEYS:
             x_ave.append(bmax)
@@ -751,11 +757,67 @@ def make_frequency_area_plot(sim_file,center_evnum,duration,output_file=None,sec
 
     plot_number_area_data(sim_file, output_file=output_file, event_range=event_range, section_filter=section_filter, magnitude_filter=magnitude_filter)    
 
+def plot_global_freq_mag(output_file="../Dropbox/UCD/Stat_Mech_219B/global_freq_mag.png"):
+	from scipy import optimize
+    
+    #Can't handle plot label if no event_range given
+    
+	anss_cat 		= '../Dropbox/UCD/Stat_Mech_219B/ANSS_global_1990_2010.txt'
+	cum_num 	= {}
+	mags = []
 
+	with open(anss_cat) as f:
+		for numline,line in enumerate(f):
+			if numline > 8:
+				mags.append(float(line.split()[5]))
+
+	total_events = len(mags)
+
+	for num,mag in enumerate(sorted(mags)):
+		cum_num[mag] = total_events - (num + 1)
+
+	sys.stdout.write("\nnumber of events  : {}\n".format(total_events))
+    
+    # dump the counts into x and y arrays for plotting. also, divide the count
+    # by the number of years so we get count per year.
+	x = []
+	y = []
+	for mag in sorted(iter(cum_num)):
+		x.append(float(mag))
+		y.append(float(cum_num[mag]))
+        
+	x_av,y_av = bin_2d(x,y,bmin=5.5,bmax=7.5)
+
+	#Fitting to gutenberg richter
+	fitfunc = lambda p, m: p[0] - p[1]*m # Target function
+	errfunc = lambda p, m, y: fitfunc(p,m) - y # Distance to the target function
+	p0 = [9.6, 1.0] # Initial guess for the parameters
+	p1, success = optimize.leastsq(errfunc, p0[:], args=(x_av,np.log10( y_av)))
+
+	a_fit, b_fit = p1[0],p1[1]
+
+    # create the best fit line
+	x_fit = np.linspace(min(x_av),max(x_av),num=10)
+	y_fit = (10**(a_fit))*10**(-b_fit*x_fit)
+       
+	plt.title('     1990-2010')
+       
+	fit_label = 'a = %.3f, b=-%.3f'%(a_fit,b_fit)
+
+	plt.plot(x_fit,y_fit,label=fit_label,ls='-',lw=2,c='grey')  
+	plt.plot(x,y,'.',c='k')
+	plt.legend(loc='upper right') 
+	plt.autoscale(tight=False)
+	plt.savefig(output_file,dpi=200)
+    
+
+"""
 evnum    = 109382
 duration = 100
 sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 make_frequency_area_plot(sim_file,evnum,duration,output_file='test_number_area.png')
+"""
+
 
 #=============================================================================
 #evnum = 109382
