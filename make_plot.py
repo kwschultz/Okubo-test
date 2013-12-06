@@ -5,7 +5,8 @@ reload(test_plot)
 
 import numpy as np
 import os
-import sys
+import time
+
 
 sys.path.insert(0,"/home/kasey/PyVC/")
 from pyvc import vcplots
@@ -76,10 +77,10 @@ with VCSimData() as sim_data:
 	center_evyear	= events.get_event_year(center_evnum)
 start_year	= round(center_evyear)-duration/2.0
 end_year	= round(center_evyear)+duration/2.0
-print 'start year: {},end year: {},duration: {}'.format(start_year,end_year,end_year-start_year)
+#print 'start year: {},end year: {},duration: {}'.format(start_year,end_year,end_year-start_year)
 start_time	= time.time()
 
-output_dir  = '../Desktop/Dropbox/UCD/Stat_Mech_219B/'
+output_dir  = '../Dropbox/UCD/Stat_Mech_219B/'
 tags        = ['mag_area','slip_rupture_length','frequency_mag','recurrence']
 output_files= []
 for k in range(len(tags)):
@@ -92,7 +93,7 @@ event_range={'type':'year','filter':(start_year,end_year)}
 vcplots.magnitude_rupture_area(sim_file,output_files[0],event_range=event_range)
 vcplots.average_slip_surface_rupture_length(sim_file,output_files[1],event_range=event_range)
 vcplots.frequency_magnitude(sim_file,output_files[2],event_range=event_range)
-vcplots.plot_recurrence_intervals(sim_file,output_file=output_files[3],event_range=event_range)
+#vcplots.plot_recurrence_intervals(sim_file,output_file=output_files[3],event_range=event_range)
 
 
 print "Total time - {} seconds".format(time.time()-start_time)

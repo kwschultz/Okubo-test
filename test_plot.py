@@ -672,15 +672,98 @@ def plot_dg_hist_inset(evnum,sim_file,DG_MIN=-30.0,DG_MAX=30.0,NUM_BINS=100):
     this_fig.savefig(out_file,dpi=200)
     plt.clf()
 
+def plot_number_area_data(sim_file, output_file=None, event_range=None, section_filter=None, magnitude_filter=None):
+    from pyvc import *
+    from pyvc import vcplotutils
+    
+    #Can't handle plot label if no event_range given
+    
+    with VCSimData() as sim_data:
+        # open the simulation data file
+        sim_data.open_file(sim_file)
+        
+        # instantiate the vc events class passing in an instance of the
+        # VCSimData class
+        events = VCEvents(sim_data)
+        
+        # get the data
+        event_data = events.get_event_data(['event_number','event_area'], event_range=event_range, magnitude_filter=magnitude_filter, section_filter=section_filter)
+        
+   
+    start,end = event_range['filter']
+    duration  = round(end-start)
+    
+    #---------------------------------------------------------------------------
+    # Prepare the plot and do it.
+    #---------------------------------------------------------------------------  
+    # initilize a dict to store the event counts and get the total number
+    # of events.
+    cum_num = {}
+    total_events   = len(event_data['event_number']) 
+        
+    for num in range(total_events):
+        area = float(sorted(event_data['event_area'])[num])*float(pow(10,-6))
+        cum_num[area] = total_events - (num + 1)
+
+    sys.stdout.write("\nnumber of events  : {}\n".format(total_events))
+    
+    # dump the counts into x and y arrays for plotting. also, divide the count
+    # by the number of years so we get count per year.
+    x = []
+    y = []
+    for area in sorted(iter(cum_num)):
+        x.append(float(area))
+        y.append(float(cum_num[area]))
+        
+    # create the line for b = 1
+    x_b1 = np.linspace(min(x),max(x),num=10)
+    y_b1 = x_b1**-1
+       
+    plt.title('      Duration: {} years      Total events: {}'.format(duration,total_events))
+       
+    plt.plot(x_b1,y_b1,label='b=1',ls='-',lw=2,c='grey')  
+    plt.plot(x,y,'.',c='k')
+    plt.legend(loc='upper right') 
+    plt.autoscale(tight=False)
+    plt.savefig(output_file,dpi=200)
+       
+    # do the standard plot
+    """vcplotutils.standard_plot(output_file, x, y,
+        axis_format='plot',
+        add_lines=[{'label':'b=1', 'x':x_b1, 'y':y_b1}],
+        axis_labels = {'y':'N', 'x':'rupture area [km^2]'},
+        connect_points=True,
+        legend_loc='upper right',
+        plot_label = '      Duration: {} years   Total events: {}'.format(duration,total_events),
+    )
+    """
+
+def make_frequency_area_plot(sim_file,center_evnum,duration,output_file=None,section_filter=None, magnitude_filter=None):
+    from pyvc import *
+    with VCSimData() as sim_data:
+        sim_data.open_file(sim_file)
+        events           = VCEvents(sim_data)
+        center_evyear    = events.get_event_year(center_evnum)
+    start_year  = round(center_evyear)-duration/2.0
+    end_year    = round(center_evyear)+duration/2.0
+
+    event_range = {'type':'year','filter':(start_year,end_year)}
+
+    plot_number_area_data(sim_file, output_file=output_file, event_range=event_range, section_filter=section_filter, magnitude_filter=magnitude_filter)    
 
 
+evnum    = 109382
+duration = 100
+sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
+make_frequency_area_plot(sim_file,evnum,duration,output_file='test_number_area.png')
+
+#=============================================================================
 #evnum = 109382
 #sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 #DG_MIN,DG_MAX = -30.0,30.0
 #NBIN          = 100
 #binner = np.linspace(DG_MIN,DG_MAX,NBIN)
 #plot_dg_hist(evnum,sim_file,BINS=binner)
-#=============================================================================
 #=============================================================================
 #--DEPRECATED OR OLD----------------------------------------------------------
 """def plot_dg_hist(dg_flat,savename,Nbins=100):
