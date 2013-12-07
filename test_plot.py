@@ -816,12 +816,17 @@ def plot_global_freq_mag(output_file="../Desktop/Dropbox/UCD/Stat_Mech_219B/glob
 	
 	
 def plot_freq_mag(sim_file='ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'):
-	from pyvc import vcsimdata
+	from pyvc import vcsimdata,vcevents
 	from scipy import optimize
 	
 	outfile = '../Dropbox/UCD/Stat_Mech_219B/vc_gr_ensemble.png'
 	
 	plt.clf()
+
+    # for the UCERF2 error bars
+	x_UCERF = [5.0, 5.5, 6.0, 6.5, 7.0, 7.5]
+	y_UCERF = [4.73, 2.15, 0.71, 0.24, 0.074, 0.020]
+	y_error_UCERF = [[1.2, 0.37, 0.22, 0.09, 0.04, 0.016],[1.50, 0.43, 0.28, 0.11, 0.06, 0.035]]
 	
 	years = [(0,200),(3100,3300),(6200,6400),(8500,8700),(11500,11700),
 				(15600,15800),(17700,17900),(20800,21000),(22700,22900),
@@ -835,7 +840,7 @@ def plot_freq_mag(sim_file='ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'):
         
         # instantiate the vc events class passing in an instance of the
         # VCSimData class
-		events = VCEvents(sim_data)
+		events = vcevents.VCEvents(sim_data)
 		all_mags = []
 		total_duration = 0.0
         
@@ -871,12 +876,12 @@ def plot_freq_mag(sim_file='ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'):
 		y.append(float(cum_freq[magnitude])/total_duration)
 
 	# Fit data to GR relation
-	x_av,y_av = bin_2d(x,y,bmin=5.5,bmax=7.5)
+	x_av,y_av = bin_2d(x,y,bmin=4.5,bmax=7.5)
 
 	#Fitting to gutenberg richter
 	fitfunc = lambda p, m: p[0] - p[1]*m # Target function
 	errfunc = lambda p, m, y: fitfunc(p,m) - y # Distance to the target function
-	p0 = [9.6, 1.0] # Initial guess for the parameters
+	p0 = [y_UCERF[0]*1.5, 1.0] # Initial guess for the parameters
 	p1, success = optimize.leastsq(errfunc, p0[:], args=(x_av,np.log10( y_av)))
 
 	a_fit, b_fit = p1[0],p1[1]
@@ -884,16 +889,11 @@ def plot_freq_mag(sim_file='ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'):
     # create the best fit line
 	x_fit = np.linspace(min(x),max(x),num=10)
 	y_fit = 10**(a_fit)*10**(-b_fit*x_fit)
-   
-    # for the UCERF2 error bars
-	x_UCERF = [5.0, 5.5, 6.0, 6.5, 7.0, 7.5]
-	y_UCERF = [4.73, 2.15, 0.71, 0.24, 0.074, 0.020]
-	y_error_UCERF = [[1.2, 0.37, 0.22, 0.09, 0.04, 0.016],[1.50, 0.43, 0.28, 0.11, 0.06, 0.035]]
     
 	fit_label = 'a = %.3f, b=-%.3f'%(a_fit,b_fit)
     
-	plt.semilogy(x,y,'c','.')
-	plt.semilogy(x_UCERF,y_UCERF,yerror=y_error_UCERF,c='r',ls='--',label="UCERF2")
+	plt.semilogy(x,y,c='k',ls='dotted')
+	plt.errorbar(x_UCERF,y_UCERF,yerr=y_error_UCERF,c='r',ls='--',label="UCERF2")
 	plt.semilogy(x_fit,y_fit,label=fit_label)
     
 	plt.legend(loc='upper right')
