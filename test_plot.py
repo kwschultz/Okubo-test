@@ -678,7 +678,7 @@ def plot_dg_hist_inset(evnum,sim_file,DG_MIN=-30.0,DG_MAX=30.0,NUM_BINS=100):
     this_fig.savefig(out_file,dpi=200)
     plt.clf()
 
-def plot_number_area_data(sim_file, output_file=None, event_range=None, section_filter=None, magnitude_filter=None):
+def plot_number_area_data(sim_file, output_file=None, event_range=None):
     from pyvc import *
     from pyvc import vcplotutils
     
@@ -693,7 +693,7 @@ def plot_number_area_data(sim_file, output_file=None, event_range=None, section_
         events = VCEvents(sim_data)
         
         # get the data
-        event_data = events.get_event_data(['event_number','event_area'], event_range=event_range, magnitude_filter=magnitude_filter, section_filter=section_filter)
+        event_data = events.get_event_data(['event_number','event_area'], event_range=event_range)
         
    
     start,end = event_range['filter']
@@ -722,15 +722,19 @@ def plot_number_area_data(sim_file, output_file=None, event_range=None, section_
         y.append(float(cum_num[area]))
         
     # create the line for b = 1
-    x_b1 = np.linspace(min(x),max(x),num=10)
-    y_b1 = x_b1**-1
+    x_b1 = np.linspace(min(x),max(x),num=1000)
+    y_b1 = y[0]*x_b1[0]*(np.array(x_b1)**-1)
+    #sys.stdout.write(str(y_b1))
        
-    plt.title('      Duration: {} years      Total events: {}'.format(duration,total_events))
+    plt.title('Duration: {} years    Total events: {}'.format(duration,total_events))
        
-    plt.plot(x_b1,y_b1,label='b=1',ls='-',lw=2,c='grey')  
+    plt.plot(x_b1,y_b1,label='b=1',ls='-',lw=2,c='r')  
     plt.plot(x,y,'.',c='k')
     plt.legend(loc='upper right')  
-	#plt.xlim()
+    plt.ylabel(r'$N (\geq A_r)$')
+    plt.xlabel(r'$A_r [km^2]$')
+    plt.xlim(-500,5500)
+    plt.ylim(-20,750)
     plt.savefig(output_file,dpi=200)
        
     # do the standard plot
@@ -744,18 +748,11 @@ def plot_number_area_data(sim_file, output_file=None, event_range=None, section_
     )
     """
 
-def make_frequency_area_plot(sim_file,center_evnum,duration,output_file=None,section_filter=None, magnitude_filter=None):
-    from pyvc import *
-    with VCSimData() as sim_data:
-        sim_data.open_file(sim_file)
-        events           = VCEvents(sim_data)
-        center_evyear    = events.get_event_year(center_evnum)
-    start_year  = round(center_evyear)-duration/2.0
-    end_year    = round(center_evyear)+duration/2.0
+def make_frequency_area_plot(sim_file,center_evnum,duration,output_file=None):
 
-    event_range = {'type':'year','filter':(start_year,end_year)}
+    event_range = {'type':'year','filter':(500,700)}
 
-    plot_number_area_data(sim_file, output_file=output_file, event_range=event_range, section_filter=section_filter, magnitude_filter=magnitude_filter)    
+    plot_number_area_data(sim_file, output_file=output_file, event_range=event_range)    
 
 def plot_global_freq_mag(output_file="../Desktop/Dropbox/UCD/Stat_Mech_219B/global_freq_mag.png"):
 	from scipy import optimize
@@ -902,12 +899,12 @@ def plot_freq_mag(sim_file='ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'):
 	
 	plt.savefig(outfile,dpi=200)
 
-"""
+
 evnum    = 109382
 duration = 100
 sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 make_frequency_area_plot(sim_file,evnum,duration,output_file='test_number_area.png')
-"""
+
 
 
 #=============================================================================
