@@ -4,10 +4,10 @@ sys.path.append("/home/kasey/PyVC/")
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-import quakelib
+#import quakelib
 import math
 import os
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+#from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.font_manager as mfont
 
 if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
@@ -729,8 +729,8 @@ def plot_number_area_data(sim_file, output_file=None, event_range=None, section_
        
     plt.plot(x_b1,y_b1,label='b=1',ls='-',lw=2,c='grey')  
     plt.plot(x,y,'.',c='k')
-    plt.legend(loc='upper right') 
-    plt.autoscale(tight=False)
+    plt.legend(loc='upper right')  
+	#plt.xlim()
     plt.savefig(output_file,dpi=200)
        
     # do the standard plot
@@ -757,12 +757,14 @@ def make_frequency_area_plot(sim_file,center_evnum,duration,output_file=None,sec
 
     plot_number_area_data(sim_file, output_file=output_file, event_range=event_range, section_filter=section_filter, magnitude_filter=magnitude_filter)    
 
-def plot_global_freq_mag(output_file="../Dropbox/UCD/Stat_Mech_219B/global_freq_mag.png"):
+def plot_global_freq_mag(output_file="../Desktop/Dropbox/UCD/Stat_Mech_219B/global_freq_mag.png"):
 	from scipy import optimize
+	
+	plt.clf()
     
     #Can't handle plot label if no event_range given
     
-	anss_cat 		= '../Dropbox/UCD/Stat_Mech_219B/ANSS_global_1990_2010.txt'
+	anss_cat 		= '../Desktop/Dropbox/UCD/Stat_Mech_219B/ANSS_global_1990_2010.txt'
 	cum_num 	= {}
 	mags = []
 
@@ -776,7 +778,7 @@ def plot_global_freq_mag(output_file="../Dropbox/UCD/Stat_Mech_219B/global_freq_
 	for num,mag in enumerate(sorted(mags)):
 		cum_num[mag] = total_events - (num + 1)
 
-	sys.stdout.write("\nnumber of events  : {}\n".format(total_events))
+	#sys.stdout.write("\nnumber of events  : {}\n".format(total_events))
     
     # dump the counts into x and y arrays for plotting. also, divide the count
     # by the number of years so we get count per year.
@@ -797,19 +799,108 @@ def plot_global_freq_mag(output_file="../Dropbox/UCD/Stat_Mech_219B/global_freq_
 	a_fit, b_fit = p1[0],p1[1]
 
     # create the best fit line
-	x_fit = np.linspace(min(x_av),max(x_av),num=10)
-	y_fit = (10**(a_fit))*10**(-b_fit*x_fit)
+	x_fit = np.linspace(min(x),max(x),num=10)
+	y_fit = 10**(a_fit)*10**(-b_fit*x_fit)
        
 	plt.title('     1990-2010')
        
 	fit_label = 'a = %.3f, b=-%.3f'%(a_fit,b_fit)
 
-	plt.plot(x_fit,y_fit,label=fit_label,ls='-',lw=2,c='grey')  
-	plt.plot(x,y,'.',c='k')
+	plt.plot(x_fit,y_fit,label=fit_label,ls='-',lw=3,c='grey')  
+	plt.semilogy(x,y,'.',c='k')
+	plt.xlabel('magnitude, m')
+	plt.ylabel(r'N ($\geq$ m)')
 	plt.legend(loc='upper right') 
-	plt.autoscale(tight=False)
+	#plt.autoscale(tight=False)
 	plt.savefig(output_file,dpi=200)
+	
+	
+def plot_freq_mag(sim_file='ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'):
+	from pyvc import vcsimdata
+	from scipy import optimize
+	
+	outfile = '../Dropbox/UCD/Stat_Mech_219B/vc_gr_ensemble.png'
+	
+	plt.clf()
+	
+	years = [(0,200),(3100,3300),(6200,6400),(8500,8700),(11500,11700),
+				(15600,15800),(17700,17900),(20800,21000),(22700,22900),
+				(24800,25000),(27000,27200),(29000,29200),(31000,31200),
+				(33000,33200),(37000,37200),(40000,40200),(42000,42200),
+				(43500,43700),(46300,46500),(48800,49000)]
+	
+	with vcsimdata.VCSimData() as sim_data:
+        # open the simulation data file
+		sim_data.open_file(sim_file)
+        
+        # instantiate the vc events class passing in an instance of the
+        # VCSimData class
+		events = VCEvents(sim_data)
+		all_mags = []
+		total_duration = 0.0
+        
+		for year_pair in years:
+			start,end = year_pair
+        	
+			event_range={'type':'year','filter':(start,end)}
+        
+        	# get the data
+			event_data     = events.get_event_data(['event_magnitude', 'event_range_duration'], event_range=event_range)
+			these_mags     = event_data['event_magnitude']
+			total_duration+= event_data['event_range_duration']
+        	
+			for mag in these_mags:
+				all_mags.append(mag)
     
+    
+    # initilize a dict to store the event counts and get the total number
+    # of events.
+	cum_freq = {}
+	total_events = len(all_mags)
+    
+    # count the number of events bigger than each magnitude
+	for num, magnitude in enumerate(sorted(all_mags)):
+		cum_freq[magnitude] = total_events - (num + 1)
+    
+    # dump the counts into x and y arrays for plotting. also, divide the total duration 
+    # to get an ensemble average of EQs per year
+	x = []
+	y = []
+	for magnitude in sorted(cum_freq.iterkeys()):
+		x.append(magnitude)
+		y.append(float(cum_freq[magnitude])/total_duration)
+
+	# Fit data to GR relation
+	x_av,y_av = bin_2d(x,y,bmin=5.5,bmax=7.5)
+
+	#Fitting to gutenberg richter
+	fitfunc = lambda p, m: p[0] - p[1]*m # Target function
+	errfunc = lambda p, m, y: fitfunc(p,m) - y # Distance to the target function
+	p0 = [9.6, 1.0] # Initial guess for the parameters
+	p1, success = optimize.leastsq(errfunc, p0[:], args=(x_av,np.log10( y_av)))
+
+	a_fit, b_fit = p1[0],p1[1]
+
+    # create the best fit line
+	x_fit = np.linspace(min(x),max(x),num=10)
+	y_fit = 10**(a_fit)*10**(-b_fit*x_fit)
+   
+    # for the UCERF2 error bars
+	x_UCERF = [5.0, 5.5, 6.0, 6.5, 7.0, 7.5]
+	y_UCERF = [4.73, 2.15, 0.71, 0.24, 0.074, 0.020]
+	y_error_UCERF = [[1.2, 0.37, 0.22, 0.09, 0.04, 0.016],[1.50, 0.43, 0.28, 0.11, 0.06, 0.035]]
+    
+	fit_label = 'a = %.3f, b=-%.3f'%(a_fit,b_fit)
+    
+	plt.semilogy(x,y,'c','.')
+	plt.semilogy(x_UCERF,y_UCERF,yerror=y_error_UCERF,c='r',ls='--',label="UCERF2")
+	plt.semilogy(x_fit,y_fit,label=fit_label)
+    
+	plt.legend(loc='upper right')
+	plt.xlabel('magnitude, m')
+	plt.ylabel(r'N ($\geq$ m)')
+	
+	plt.savefig(outfile,dpi=200)
 
 """
 evnum    = 109382
