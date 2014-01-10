@@ -4,10 +4,10 @@ sys.path.append("/home/kasey/PyVC/")
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-#import quakelib
+import quakelib
 import math
 import os
-#from mpl_toolkits.axes_grid1 import make_axes_locatable
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.font_manager as mfont
 
 if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
@@ -140,7 +140,7 @@ def get_linspaces(Xmin,Xmax,Nx,Ymin,Ymax,Ny):
 
 #-----------------------------------------------------------------------------
 def get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
-               DG=False,DH=False,DZ=False,DG2=False):
+               DG=False,DH=False,DZ=False,DG2=False,DV=False):
     
     okada   = quakelib.Okada() 
     X,Y     = get_linspaces(Xmin,Xmax,Nx,Ymin,Ymax,Ny)
@@ -152,6 +152,12 @@ def get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
             for j in range(len(XX[1])):
                 loc       = quakelib.Vec2(XX[i][j],YY[i][j])
                 MAT[i][j] = okada.calc_dg(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)
+    elif DV:
+        for i in range(len(XX[0])):
+            for j in range(len(XX[1])):
+                loc       = quakelib.Vec3(XX[i][j],YY[i][j],0.0)
+                MAT[i][j] = okada.calc_dV(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)
+                
     elif DG2:
         for i in range(len(XX[0])):
             for j in range(len(XX[1])):
@@ -216,7 +222,7 @@ def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none',suff='none'):
 def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
               save=False,DG2=False,DG=True,DZ=False,DH=False,
               DIFFZ=False,DIFFG=False,CLIMITS=False,SUFFIX='none',
-              HIST=False,SHOW=False):
+              HIST=False,SHOW=False,DV=False):
     
     # Need to remove a cached file for Arial fonts to be used
     if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
@@ -269,6 +275,16 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         FMT         = '%.1f'
         UNIT        = pow(10,-2)  # centimeters  
         CLABEL      = r'$\Delta z \ [cm]$'
+    elif DV:
+        XX,YY,dv    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
+                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DV=True)
+        UNIT        = 1.0 #pow(10,-4)  #GUESS?!?!?!
+        CLABEL      = r'Gravitational potential change $[units??]$'
+        FMT         = '%i'   
+        Data        = dv
+        filename    = 'test_dV.png'
+        
+        
     elif not DZ and not DH:
         #        Plot either DG or DG2
         pre                 = ('dg2' if DG2 else 'dg')
@@ -325,7 +341,11 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1, fontproperties=framelabelfont)
     img_ax.set_ylabel(r'[$km$]',labelpad=-5, fontproperties=framelabelfont)
     
-    forced_ticks  = [int(num) for num in np.linspace(CMIN,CMAX,11)]
+    if CLIMITS:
+        forced_ticks  = [int(num) for num in np.linspace(CMIN,CMAX,11)]
+    else:
+        Data          = np.array(Data)
+        forced_ticks  = [num for num in np.linspace(Data.min(),Data.max(),11)]
     
     # Make color bar and put its label below its x-axis
     divider       = make_axes_locatable(fig_axes)
@@ -343,18 +363,20 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     
     # Want to change outermost tick labels on colorbar
-    #   from 'VALUE','-VALUE' to '>VALUE' and '<-VALUE'    
-    cb_tick_labs = [str(num) for num in forced_ticks]
-    cb_tick_labs[0] = '<'+cb_tick_labs[0]
-    cb_tick_labs[-1] = '>'+cb_tick_labs[-1]
-    cbar.ax.set_xticklabels(cb_tick_labs)
-      
+    #   from 'VALUE','-VALUE' to '>VALUE' and '<-VALUE'  
+    if not DV:  
+        cb_tick_labs = [str(num) for num in forced_ticks]
+        cb_tick_labs[0] = '<'+cb_tick_labs[0]
+        cb_tick_labs[-1] = '>'+cb_tick_labs[-1]
+        cbar.ax.set_xticklabels(cb_tick_labs)
       
     for label in img_ax.xaxis.get_ticklabels()+img_ax.yaxis.get_ticklabels():
         label.set_fontproperties(framelabelfont)  
         
     for label in cbar_ax.xaxis.get_ticklabels()+cbar_ax.yaxis.get_ticklabels():
         label.set_fontproperties(ticklabelfont)        
+      
+      
       
     # Draw a projection of the fault
     W_proj      = W*np.cos(dip)  #projected width of fault due to dip angle
@@ -900,11 +922,12 @@ def plot_freq_mag(sim_file='ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'):
 	plt.savefig(outfile,dpi=200)
 
 
+"""
 evnum    = 109382
 duration = 100
 sim_file = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 make_frequency_area_plot(sim_file,evnum,duration,output_file='test_number_area.png')
-
+"""
 
 
 #=============================================================================

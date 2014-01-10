@@ -25,19 +25,19 @@ _C          = [DTTF[i] + _W[i]*np.sin(_DIP[i]) for i in range(len(_L))]   #meter
 _US         = [5.0,0.0,0.0]
 _UD         = [0.0,-5.0,5.0]
 _UT         = [0.0,0.0,0.0]
-_LAMBDA     = 1.0
-_MU         = 1.0
+_LAMBDA     = 3.2e10
+_MU         = 3.0e10
 #_Xmin,_Xmax = -0.5*_L,1.5*_L  ### Xrange and Yrange must be same
 _Xmin,_Xmax = [-10000.0,-10000.0,-10000.0],[20000.0,20000.0,20000.0]
-_Nx         = 1000.0
+_Nx         = 100.0
 #_Ymin,_Ymax = -_W,2*_W
 _Ymin,_Ymax = [-15000.0,-10000.0,-10000.0],[15000.0,20000.0,20000.0]
-_Ny         = 1000.0
+_Ny         = 100.0
 
 ##        SWITCHES
 #*******************
 SAVE         = True
-_DG          = True
+_DG          = False
 _DG2         = False
 _DZ          = False
 _DH          = False
@@ -48,12 +48,14 @@ _suffix      = '219B'
 _HIST        = False
 _SHOW        = False
 #*******************
-"""for k in range(len(_L)):
-    test_plot.plot_dg_vs_uz_simple(_Xmin[k],_Xmax[k],_Nx,_Ymin[k],_Ymax[k],
-                                   _Ny,_C[k],_DIP[k],_L[k],_W[k],_US[k],
-                                   _UD[k],_UT[k],_LAMBDA,_MU)
+
+sim_file = '../VCModels/ALLCAL2_1-7-11_no-creep/ALLCAL2_1-7-11_no-creep_dyn-0-5_st-5.h5'
+evnum    = 10
+vcplots.plot_event_field(sim_file, evnum, output_file='test_potential_field.png', field_type='potential',
+                         fringes=True, padding=0.08, cutoff=None, save_file_prefix=None)
 
 
+"""
 #=============================================================================
 for k in range(3):
     # Need to remove a cached file for Arial fonts to be used
@@ -65,8 +67,8 @@ for k in range(3):
                         _LAMBDA,_MU,save=SAVE,DG2=_DG2,DG=_DG,DZ=_DZ,
                         DH=_DH,DIFFZ=_DIFFZ,DIFFG=_DIFFG,CLIMITS=_CLIMITS,
                         SUFFIX=_suffix,HIST=_HIST,SHOW=_SHOW)
-"""
 
+#111111111111111111111111111111111111111111111
 
 center_evnum 	= 109382    #pick a large event to be the centerpiece
 duration		= 100 			# in years, make it small for test
@@ -98,7 +100,7 @@ vcplots.frequency_magnitude(sim_file,output_files[2],event_range=event_range)
 
 print "Total time - {} seconds".format(time.time()-start_time)
 
-
+"""
 
 
 
