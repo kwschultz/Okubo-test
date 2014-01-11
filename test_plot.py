@@ -394,8 +394,128 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         plt.show()
         
     plt.clf()
-#----------------------------------------------------------------------------- 
+#-----------------------------------------------------------------------------
 
+def plot_for_cutoff(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
+              save=False,SHOW=False,_CLIMS=False):
+    
+    TRIG_TOLERANCE = 0.0001
+    NUM_BINS       = 50
+    NUM_TICKS      = 5
+    
+    ticklabelfont = mfont.FontProperties(family='Serif', style='normal', variant='normal', size=8)
+    framelabelfont = mfont.FontProperties(family='Serif', style='normal', variant='normal', size=8)
+        
+    XX,YY,dv    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
+                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DV=True)
+    UNIT        = 1.0 #pow(10,-4)  #GUESS?!?!?!
+    CLABEL      = r'Gravitational potential change $[units??]$'
+    FMT         = '%.4f'   
+    Data        = dv
+    filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'finding_cutoff_plots',
+                                           pre='potential')
+    R           = []
+    
+    def sin_o(dip):
+        if abs(np.sin(dip)) < TRIG_TOLERANCE :
+            return 0.0
+        else:
+            return np.sin(dip)
+        
+    def cos_o(dip):
+        if abs(np.cos(dip)) < TRIG_TOLERANCE :
+            return 0.0
+        else:
+            return np.cos(dip)
+        
+    cos_o_dip = cos_o(dip)
+    sin_o_dip = sin_o(dip)
+        
+    #Centroid of fault segment
+    x_c         = -0.5*W*cos_o_dip
+    y_c         = 0.5*L
+    z_c         = 0.5*W*sin_o_dip - c
+    
+    
+    for i in range(len(XX[0])):
+        for j in range(len(XX[1])):
+            x = XX[i][j]
+            y = YY[i][j]
+            
+            dist_numerator   = (x - x_c)**2 + (y-y_c)**2 + z_c**2 
+            dist_denominator = float(L*W)
+            
+            dist = np.sqrt(dist_numerator/dist_denominator)
+            R.append(dist)
+    
+            
+    R_bin_vals,counts = hist_1d(R,bmin=min(R),bmax=max(R),norm=True,num_bins=NUM_BINS) 
+    this_fig    = plt.figure()
+    fig_axes    = plt.subplot(121)
+    plt.plot(R_bin_vals,counts,c='k')        
+
+    # Make the figure   
+    fig_axes    = plt.subplot(122)
+    this_img    = plt.imshow(Data/UNIT, origin = 'lower',interpolation='nearest',
+                         extent=[Xmin/1000.0,Xmax/1000.0,Ymin/1000.0,
+                                 Ymax/1000.0],cmap=plt.get_cmap('seismic'))
+    
+    # Tighten up the axis labels
+    img_ax        = this_fig.gca()
+    img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1, fontproperties=framelabelfont)
+    img_ax.set_ylabel(r'[$km$]',labelpad=-5, fontproperties=framelabelfont)
+    
+    
+    if _CLIMS:
+        LIM = 0.001
+    else:
+        max_val       = abs(Data.max())
+        min_val       = abs(Data.min())
+        LIM           = max([max_val,min_val])
+        
+        
+    forced_ticks  = [num for num in np.linspace(-LIM,LIM,NUM_TICKS)]
+    
+    # Make color bar and put its label below its x-axis
+    divider       = make_axes_locatable(fig_axes)
+    cbar_ax       = divider.append_axes("top", size="5%",pad=0.02)                       
+    cbar          = plt.colorbar(this_img,format=FMT,
+                               orientation='horizontal',cax=cbar_ax,
+                               ticks=forced_ticks)
+    
+    plt.clim(-LIM,LIM)
+    
+    # Make and position colorbar label
+    cbar_ax.set_xlabel(CLABEL,labelpad=-40, fontproperties=framelabelfont)
+    cbar_ax.tick_params(axis='x',labelbottom='off',labeltop='on',
+                        bottom='off',top='off',right='off',left='off',pad=-0.5)
+
+    # Draw a projection of the fault
+    W_proj      = W*np.cos(dip)  #projected width of fault due to dip angle
+    fault_proj  = mpl.patches.Rectangle((0.0,0.0),L/1000.0,W_proj/1000.0,
+                                        ec='c',fc='none',fill=False,
+                                        ls='solid')
+    fig_axes.add_patch(fault_proj)
+    
+    
+    for label in img_ax.xaxis.get_ticklabels()+img_ax.yaxis.get_ticklabels():
+        label.set_fontproperties(framelabelfont)  
+        
+    for label in cbar_ax.xaxis.get_ticklabels()+cbar_ax.yaxis.get_ticklabels():
+        label.set_fontproperties(ticklabelfont)  
+    
+    plt.clim(-LIM,LIM)
+    
+    # Save the plot
+    if save:
+        plt.savefig(filename,dpi=300)
+        print '>>> plot saved: '+filename
+        
+    if SHOW:
+        plt.show()
+        
+    plt.clf()
+#-----------------------------------------------------------------------------
 
 
 def plot_dg_vs_uz_simple(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
