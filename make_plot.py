@@ -16,6 +16,7 @@ from pyvc import *
 if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
     os.remove('/home/kasey/.matplotlib/fontList.cache')
 #=============================================================================
+"""
 #        DATA
 DTTF        = [1000.0,1000.0,1000.0]   # depth to top of fault (Okubo's style)
 _DIP        = [np.pi/2.0,np.pi/3.0,np.pi/6.0]
@@ -50,22 +51,60 @@ _HIST        = False
 _SHOW        = False
 #*******************
 """
+
+
+#------------------------------------------------------------------------------
+##  ANIMATION SWITCHES & KNOBS
+#******************************
+center_evnum = 91382    #pick a large event to be the centerpiece
+duration           = 100             # in years, make it small for test
+#sim_file          = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
+sim_file             = '../VCModels/ALLCAL2_1-7-11_no-creep/ALLCAL2_1-7-11_no-creep_dyn-0-5_st-5.h5'
+FIELD              = 'displacement'
+LENGTH          = 10.0
+FPS                   = 5.0
+FADE                = 1.0
+PLOT                = True
+MIN_MAG_MARK   = 6.5
+output_directory      = 'animation_test_d/'
+
+"""
+with VCSimData() as sim_data:
+    sim_data.open_file(sim_file)
+    events         = VCEvents(sim_data)
+    center_evyear  = events.get_event_year(center_evnum)
+start_year         = round(center_evyear)-duration/2.0
+end_year           = round(center_evyear)+duration/2.0
+"""
+start_year  = 0.0
+end_year    = 100.0
+event_range={'type':'year','filter':(start_year,end_year)}
+
+vcplots.event_field_animation(sim_file, output_directory, event_range,
+    field_type=FIELD, fringes=True, padding=0.08, cutoff=None,
+    animation_target_length=LENGTH, animation_fps = FPS, fade_seconds = FADE,
+    min_mag_marker = MIN_MAG_MARK, force_plot=PLOT)
+#------------------------------------------------------------------------------
+
+
+
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+"""
 sim_file = '../VCModels/ALLCAL2_1-7-11_no-creep/ALLCAL2_1-7-11_no-creep_dyn-0-5_st-5.h5'
 evnum    = 10
 vcplots.plot_event_field(sim_file, evnum, output_file='test_potential_field_'+str(evnum)+'.png', field_type='potential',
                          fringes=True, padding=0.08, cutoff=None, save_file_prefix=None)
-"""
-
+#------------------------------------------------------------------------------
 sim_file = '../VCModels/ALLCAL2_1-7-11_no-creep/ALLCAL2_1-7-11_no-creep_dyn-0-5_st-5.h5'
 event_range={'type':'year','filter':(0,105)}
 output_directory = 'animation_test_v/'
 vcplots.event_field_animation(sim_file, output_directory, event_range,
     field_type='potential', fringes=True, padding=0.08, cutoff=None,
-    animation_target_length=10.0, animation_fps = 2.0, fade_seconds = 0.5,
-    min_mag_marker = 5.0, force_plot=True)
-
-
-
+    animation_target_length=10.0, animation_fps = 2.0, fade_seconds = 1.0,
+    min_mag_marker = 5.5, force_plot=True)
+"""
 
 
 """
@@ -74,8 +113,6 @@ for k in range(len(_C)):
                         _DIP[k],_L[k],_W[k],_US[k],_UD[k],_UT[k],
                         _LAMBDA,_MU,save=SAVE,SHOW=_SHOW,_CLIMS=_CLIMITS)
 """
-
-
 
 """
 #=============================================================================
