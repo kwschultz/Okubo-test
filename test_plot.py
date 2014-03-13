@@ -222,14 +222,14 @@ def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none',suff='none'):
 def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
               save=False,DG2=False,DG=True,DZ=False,DH=False,
               DIFFZ=False,DIFFG=False,CLIMITS=False,SUFFIX='none',
-              HIST=False,SHOW=False,DV=False):
+              HIST=False,SHOW=False,DV=False,NOLABELS=False,tick_font=12,frame_font=12,num_ticks=7):
     
     # Need to remove a cached file for Arial fonts to be used
     if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
         os.remove('/home/kasey/.matplotlib/fontList.cache')
     
-    ticklabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=9)
-    framelabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=10)
+    ticklabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=tick_font)
+    framelabelfont = mfont.FontProperties(family='Arial', style='normal', variant='normal', size=frame_font)
     
     """
     Immutable constants: (hard coded in quakelib/src/QuakeLibOkada.cpp) all MKS
@@ -280,7 +280,7 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
                                  c,dip,L,W,US,UD,UT,LAMBDA,MU,DV=True)
         UNIT        = 1.0 #pow(10,-4)  #GUESS?!?!?!
         CLABEL      = r'Gravitational potential change $[units??]$'
-        FMT         = '%i'   
+        FMT         = '%.4f'   
         Data        = dv
         filename    = 'test_dV.png'
         
@@ -311,15 +311,29 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
             
         CLABEL      = r'gravity changes $[\mu gal]$'
     else:
-         #        Plot either DZ or DH
+        #        Plot either DZ or DH
         pre                 = ('dh' if DH else 'dz')
-        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dz_plots',
-                                           pre=pre,suff=SUFFIX)        
+        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dz_plots',pre=pre,suff=SUFFIX)
+
+        if fault_type == 'strikeslip':
+            CMIN,CMAX   = -.2,.2
+            #plot_lab    = "Strike-slip"
+        elif fault_type == 'thrust':
+            CMIN,CMAX   = -2.0,2.0
+            #plot_lab    = "Thrust"
+        elif fault_type == 'normal':
+            CMIN,CMAX   = -2.0,2.0
+            #plot_lab    = "Normal"
+        else:
+            CMIN,CMAX   = -2.0,2.0
+            #plot_lab    = "Tensile"
+      
         XX,YY,Data  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
                                  c,dip,L,W,US,UD,UT,LAMBDA,MU,DH=DH,DZ=DZ)
-        FMT         = '%.2f'
-        UNIT        = pow(10,-2)  # centimeters  
-        CLABEL      = r'$\Delta z \ [cm]$'         
+        FMT         = '%.1f'
+        #UNIT      = pow(10,-2)  # centimeters  
+        UNIT       = 1.0
+        CLABEL      = r'$\Delta z \ [m]$'         
     #---------------------------------------------------------
     
     if HIST:
@@ -338,29 +352,38 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     # Tighten up the axis labels
     img_ax        = this_fig.gca()
-    img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1, fontproperties=framelabelfont)
-    img_ax.set_ylabel(r'[$km$]',labelpad=-5, fontproperties=framelabelfont)
+    if not NOLABELS:
+        img_ax.set_xlabel(r'along fault [$km$]',labelpad=-1, fontproperties=framelabelfont)
+        img_ax.set_ylabel(r'[$km$]',labelpad=-5, fontproperties=framelabelfont)
     
     if CLIMITS:
-        forced_ticks  = [int(num) for num in np.linspace(CMIN,CMAX,11)]
+        plt.clim(CMIN,CMAX)
+        if DG:
+            forced_ticks  = [int(num) for num in np.linspace(CMIN,CMAX,num_ticks)]
+        else:
+            forced_ticks  = [num for num in np.linspace(CMIN,CMAX,num_ticks)]
     else:
         Data          = np.array(Data)
-        forced_ticks  = [num for num in np.linspace(Data.min(),Data.max(),11)]
+        forced_ticks  = [num for num in np.linspace(Data.min(),Data.max(),num_ticks)]
+
+
     
     # Make color bar and put its label below its x-axis
     divider       = make_axes_locatable(fig_axes)
-    cbar_ax       = divider.append_axes("top", size="5%",pad=0.02)                       
-    cbar          = plt.colorbar(this_img,format=FMT,
+    cbar_ax      = divider.append_axes("top", size="5%",pad=0.02)                       
+    cbar            = plt.colorbar(this_img,format=FMT,
                                orientation='horizontal',cax=cbar_ax,
                                ticks=forced_ticks)
-    if CLIMITS:
-        plt.clim(CMIN,CMAX)
+
     
     # Make and position colorbar label
-    cbar_ax.set_xlabel(CLABEL,labelpad=-40, fontproperties=framelabelfont)
+    if not NOLABELS:
+        cbar_ax.set_xlabel(CLABEL,labelpad=-40, fontproperties=framelabelfont)
+
     cbar_ax.tick_params(axis='x',labelbottom='off',labeltop='on',
                         bottom='off',top='off',right='off',left='off',pad=-0.5)
-    
+
+
     
     # Want to change outermost tick labels on colorbar
     #   from 'VALUE','-VALUE' to '>VALUE' and '<-VALUE'  
@@ -387,7 +410,7 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     # Save the plot
     if save:
-        plt.savefig(filename,dpi=300)
+        plt.savefig(filename,dpi=350)
         print '>>> plot saved: '+filename
         
     if SHOW:

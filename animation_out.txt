@@ -1,0 +1,8 @@
+Initializing animation :: normalizing : event 109382 processing : 1222 elements : 1900.89 cutoff : 8 processors : 0 - 153, 153 - 306, 306 - 459, 459 - 612, 612 - 765, 765 - 918, 918 - 1071, 1071 - 1222, done
+Total frames : 1800, Frames per year : 18.0
+frame 0 (year 0.0) of 1800 (100.0)
+
+ Plotting :: creating the map image : finishing plot[2K[1A[2K[1A[2Kframe 1 (year 0.0555555555556) of 1800 (100.0)
+
+ Plotting :: creating the map image : finishing plot[2K[1A[2K[1A[2Kframe 2 (year 0.111111111111) of 1800 (100.0)
+ Event 108994 :: processing 3 elements :: 4.67 cutoff : 8 processors : 0 - 1, 1 - 2, 2 - 3, 
