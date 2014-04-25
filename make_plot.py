@@ -91,13 +91,16 @@ LENGTH             = 50.0
 FPS                = 20.0
 MAG_FILTER         = "<= 7.5"
 
-#vcanalysis.sim_info(sim_file,show=20,section_filter=SOUTH_SAF_SECS,magnitude_filter=MAG_FILTER)
+#vcanalysis.sim_info(sim_file,show=35,section_filter=SOUTH_SAF_SECS,magnitude_filter=MAG_FILTER)
 
+bad_evid = 191433
+###   Event numbers selected as 10 events with largest magnitude <= 7.5 on southern SAF 
+EVIDS_30    = [107556,183553,76977,33928,37557,252358,233381,225632,274396,77121,76324,138170,83894,171713,253346,4699,170663,35068,51659,67814,187742,143456,8877,9081,6348,269889,276933,150988,27209,197279]
+EVIDS_10    = [107556,183553,76977,33928,37557,252358,233381,225632,274396,77121]
 
-ALLCAL_EVIDS_in_SOCAL = [107556,183553,191433,76977,33928,252358,233381,225632,274396,77121,76324,138170,37557,83894,171713,253346,4699,170663,35068,51659]
- 
-SOCAL_EVIDS = [2550,7094,13526,14367,13502,5471,15527,1731,963,1375,6022,259,8048,715,5343,12713,2300,9355,8750,13968]
-
+early    = [76977,33928,37557,77121,107556]
+late     = [183553,252358,233381,225632,274396]
+#extra = [188313,184777,13688,207677]
 
 #event_range={'type':'year','filter':(2555,2655)}
 #output_directory = 'animation_test_v/'
@@ -106,12 +109,15 @@ SOCAL_EVIDS = [2550,7094,13526,14367,13502,5471,15527,1731,963,1375,6022,259,804
 #    animation_target_length=LENGTH/12.0, animation_fps = FPS, fade_seconds = 1.0,
 #    min_mag_marker = 6.5, force_plot=True)
 
-vcplots.event_field_evolution(sim_file, output_directory, sim_time_range,
-    field_type='gravity', fringes=True, padding=0.08, cutoff=CUTOFF,
-    animation_target_length=LENGTH, animation_fps = FPS,
-    min_mag_marker = 6.0, start_year = start_year, duration=duration,section_filter=SOUTH_SAF_SECS,
-    force_plot=True)
+#vcplots.event_field_evolution(sim_file, output_directory, sim_time_range,
+#    field_type='gravity', fringes=True, padding=0.08, cutoff=CUTOFF,
+#    animation_target_length=LENGTH, animation_fps = FPS,
+#    min_mag_marker = 5.5, start_year = start_year, duration=duration,section_filter=SOUTH_SAF_SECS,
+#    force_plot=True)
 
+#vcplots.average_field(sim_file,output_directory,EVIDS_10,field_type='gravity',pre=True,buffer=5.0,force_plot=True,section_filter=SOUTH_SAF_SECS,eq_slip_only=True,tag='eq')
+vcplots.average_field(sim_file,output_directory,EVIDS_10,field_type='gravity',pre=True,buffer=5.0,force_plot=True,section_filter=SOUTH_SAF_SECS,backslip_only=True,tag='back')
+vcplots.average_field(sim_file,output_directory,EVIDS_10,field_type='gravity',pre=True,buffer=5.0,force_plot=True,section_filter=SOUTH_SAF_SECS,eq_slip_only=True,tag='eq')
 
 
 
