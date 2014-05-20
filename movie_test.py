@@ -42,6 +42,12 @@ from pyvc import vcplots
 center_evnum 	= 109382    #pick a large event to be the centerpiece
 duration		= 100 			# in years, make it small for test
 sim_file		= 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
+
+
+vcanalysis.sim_info('ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5',show=20,)
+
+
+"""
 with VCSimData() as sim_data:
 	sim_data.open_file(sim_file)
 	events			= VCEvents(sim_data)
@@ -58,5 +64,8 @@ vcplots.event_field_animation(sim_file,output_directory,event_range,animation_ta
 							animation_fps=30.0,field_type='gravity',force_plot=False)
 
 print "Total time - {} seconds".format(time.time()-start_time)
+
+
+"""
 
 #----------------------------------------------------------

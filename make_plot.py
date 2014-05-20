@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 sys.path.insert(0,"/home/kasey/PyVC/")
 from pyvc import vcplots
 from pyvc import vcanalysis
+from pyvc import vcutils
 from pyvc import *
 
 # Need to remove a cached file for Arial fonts to be used
@@ -19,7 +20,8 @@ if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
 #=============================================================================
 
 
-
+#M0 = 4.0*pow(10,20)
+#print test_plot.mag_from_moment(M0)
 
 """
 #        DATA
@@ -46,13 +48,13 @@ _DV          = False
 _DG          = True
 _DZ          = False
 _CLIMITS     = True
-_suffix     = 'dg_paper_HIres'
+_suffix     = 'dg_paper_hi'
 _HIST        = False
 _SHOW        = False
 _NO_LABELS  = True
 NUM_TICKS   = 7
-FRAME_FONT  = 12
-TICK_FONT   = 12
+FRAME_FONT  = 14
+TICK_FONT   = 14
 #*******************
 for k in range(3):
 	test_plot.cbar_plot(_Xmin[k],_Xmax[k],_Nx,_Ymin[k],_Ymax[k],_Ny,_C[k],_DIP[k],_L[k],_W[k],_US[k],_UD[k],_UT[k],_LAMBDA,_MU,save=SAVE,DG=_DG,DZ=_DZ,CLIMITS=_CLIMITS,SUFFIX=_suffix,HIST=_HIST,SHOW=_SHOW,DV=_DV,NOLABELS=_NO_LABELS,frame_font=FRAME_FONT,tick_font=TICK_FONT,num_ticks=NUM_TICKS)
@@ -82,7 +84,6 @@ SOUTH_SAF_SECS     = {'filter':(13,14,15,16,17,18)}
 sim_file           = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 #sim_file           = 'ALLCAL2_3_4_14_southern_SAF_no-creep_dyn-0-5_st-20_10000yr.h5'
 #output_directory   = 'time_series_test/'
-output_directory   = 'animation_south/'
 #evnum              = 55
 #out_file           = output_directory+'dg_field_'+str(evnum)+'.png'
 FIELD              = 'gravity'
@@ -91,7 +92,24 @@ LENGTH             = 50.0
 FPS                = 20.0
 MAG_FILTER         = "<= 7.5"
 
-#vcanalysis.sim_info(sim_file,show=35,section_filter=SOUTH_SAF_SECS,magnitude_filter=MAG_FILTER)
+TEJON     = {'filter':(14,15)}
+SF        = {'filter':(1,2,3,4,5,6,7,8,9,10)}
+LP        = {'filter':(7,8,9,10)}
+NR        = {'filter':[52]}
+LA        = {'filter':(148,30)}
+SECS      = [TEJON,SF,NR,LA]
+MAGS      = ["<= 7.9","<= 7.9","<= 6.7","<= 7.6"]
+SHOW      = 20
+
+"""
+for k in range(len(SECS)):
+    print TAGS[k]
+    vcanalysis.detailed_sim_info(sim_file,show=SHOW,section_filter=SECS[k],magnitude_filter=MAGS[k])
+"""
+
+#vcanalysis.detailed_sim_info(sim_file,show=35,sortby='event_surface_rupture_length',section_filter=SF,magnitude_filter=MAGS[0])
+
+
 
 bad_evid = 191433
 ###   Event numbers selected as 10 events with largest magnitude <= 7.5 on southern SAF 
@@ -115,52 +133,119 @@ late     = [183553,252358,233381,225632,274396]
 #    min_mag_marker = 5.5, start_year = start_year, duration=duration,section_filter=SOUTH_SAF_SECS,
 #    force_plot=True)
 
-#vcplots.average_field(sim_file,output_directory,EVIDS_10,field_type='gravity',pre=True,buffer=5.0,force_plot=True,section_filter=SOUTH_SAF_SECS,eq_slip_only=True,tag='eq')
-vcplots.average_field(sim_file,output_directory,EVIDS_10,field_type='gravity',pre=True,buffer=5.0,force_plot=True,section_filter=SOUTH_SAF_SECS,backslip_only=True,tag='back')
-vcplots.average_field(sim_file,output_directory,EVIDS_10,field_type='gravity',pre=True,buffer=5.0,force_plot=True,section_filter=SOUTH_SAF_SECS,eq_slip_only=True,tag='eq')
+output_directory   = 'post_5_eq_fields/'
+
+BUFFER             = 5.0
+CUTOFF             = 1000.0
+PRE1               = False
+PRE2               = True
+BACK1              = False
+BACK2              = False
+EQ1                = False
+EQ2                = False
+SECS               = (SOUTH_SAF_SECS,SOUTH_SAF_SECS)
+field1dir          = 'post_5_fields/'
+field2dir          = 'pre_5_fields/'
+out_dir            = 'local/'
+TAGS               = ['tejon_alt','northridge_alt','sf_alt']
+PLOT_EVIDS         = [60019,193054,231185]
+
+
+
+center_evnum = 109382
+with VCSimData() as sim_data:
+	sim_data.open_file(sim_file)
+	events			= VCEvents(sim_data)
+	center_evyear	= events.get_event_year(center_evnum)
+start_year	= round(center_evyear)-duration/2.0
+end_year	= round(center_evyear)+duration/2.0
+
+event_range={'type':'year','filter':(start_year,end_year)}
+event_range=None
+
+pre = 'local/web_sim_full_'
+output_files = [pre+'magn_rup_area.png',pre+'avg_slip_rup_len.png',pre+'freq_mag.png',pre+'recurr_intervals.png']
+MAG_FILTER = None
+
+vcplots.magnitude_rupture_area(sim_file,output_files[0],event_range=event_range,magnitude_filter=MAG_FILTER)
+vcplots.average_slip_surface_rupture_length(sim_file,output_files[1],event_range=event_range,magnitude_filter=MAG_FILTER)
+vcplots.frequency_magnitude(sim_file,output_files[2],event_range=event_range,magnitude_filter=MAG_FILTER)
+#vcplots.plot_recurrence_intervals(sim_file,output_file=output_files[3],event_range=event_range,magnitude_filter=MAG_FILTER)
+
+
+
 
 
 
 """
-with VCSimData() as sim_data:
-    sim_data.open_file(sim_file)
-    geometry    = VCGeometry(sim_data)
-    events      = VCEvents(sim_data)
-    event_data = events.get_event_data(['event_magnitude', 'event_year', 'event_number'], event_range=sim_time_range)
-    
-    slip_rates  = geometry.get_slip_rates()
-    
-    event_element_slips = {evid:events.get_event_element_slips(evid) for evid in event_data['event_number']}
-    
-    #avg_slip    = geometry.get_average_slip_time_series(event_data,event_element_slips,start_year=start_year,duration=duration,section_filter=SOUTH_SAF_SECS)
-    
-    #max_rate = []
-    #avg_rate = 0.0
-    #for bid in slip_rates.keys():
-    #    rate = slip_rates[bid]
-    #    avg_rate += rate
-    #    if max_rate == []:
-    #        max_rate = [bid,rate]
-    #    else:
-    #        if rate > max_rate[1]:
-    #            max_rate = [bid,rate]
-                
-    #avg_rate /= float(len(slip_rates.keys()))
-    
-    #print "max rate: ",max_rate[1]
-    #print "section:  ",geometry.get_section_name(geometry.sections_with_elements([max_rate[0]])[0])
-    #print "avg_rate: ",avg_rate
-    #print "max rate: ",max_rate[1]/avg_rate," avg_rate"
+for k in range(len(PLOT_EVIDS)):
+    evnum = PLOT_EVIDS[k]
+    TAG   = TAGS[k]
+    vcplots.plot_event_field(sim_file, evnum, out_dir, field_type='gravity', padding=0.08, cutoff=CUTOFF,tag=TAG)
+    #print '\n'+TAG
+    #vcanalysis.event_sections(sim_file,evnum)
+"""
 
-time_values = np.arange(start_year+DT,start_year+duration+DT,DT)
 
-plt.clf()
-plt.plot(time_values,avg_slip)
-plt.title("Average time dependent slip on southern SAF")
-plt.grid(True)
-plt.xlabel("Simulated time")
-plt.ylabel("Average slip(t) [m]")
-plt.savefig("avg_slip.png",dpi=300)
+
+"""
+search_evnums = vcanalysis.detailed_sim_info(sim_file,show=SHOW,section_filter=LA,magnitude_filter=MAGS[-1],return_evnums=True)
+for evnum in search_evnums:
+    vcanalysis.event_sections(sim_file,evnum)
+"""
+
+
+#BUFFER = 3.0
+#output_directory = 'pre_3_fields/'
+#vcplots.compute_composite_fields(sim_file,output_directory,EVIDS_10,field_type='gravity',pre=True,buffer=BUFFER,section_filter=SOUTH_SAF_SECS,cutoff=CUTOFF)
+
+#vcplots.plot_backslip(sim_file, 1.0, section_filter=SOUTH_SAF_SECS)
+
+#vcplots.diff_composite_fields(sim_file, (EVIDS_10,EVIDS_10),field1dir,field2dir,
+#    field_type='gravity', fringes=True, padding=0.08, cutoff=None,
+#    pre=(PRE1,PRE2),buffer=(BUFFER,BUFFER),section_filter=SOUTH_SAF_SECS,
+#    backslip_only=(BACK1,BACK2),eq_slip_only=(EQ1,EQ2),tag=TAG)
+
+evnums = [193054,231185,60019]
+
+lat_lon = {'Los Angeles':(34.045536,-118.259297),'San Francisco':(37.773984,-122.418202),'Sacramento':(38.577646,-121.489948),'San Luis Obispo':(35.286790,-120.660601),'Santa Clarita':(34.388459,-118.539607),'Simi Valley':(34.266523,-118.780306),'Fort Bragg':(39.442104,-123.793432),'San Jose':(37.339686,-121.895108),'Bakersfield':(35.373937,-119.018800),'Fresno':(36.750055,-119.767782)}
+
+tags = ['Northridge','San Francisco','Fort Tejon']
+sites = [['Santa Clarita','Simi Valley','Los Angeles'],['Fort Bragg','San Francisco','San Jose'],['Los Angeles','Bakersfield','San Luis Obispo']]
+"""
+for k in range(len(evnums)):
+    evnum = evnums[k]
+    tag   = tags[k]
+    cities= sites[k]
+    with VCSimData() as sim_data:
+        sim_data.open_file(sim_file)
+        geometry    = VCGeometry(sim_data)
+        #events      = VCEvents(sim_data)
+        
+        min_lat = geometry.min_lat
+        max_lat = geometry.max_lat
+        min_lon = geometry.min_lon
+        max_lon = geometry.max_lon
+        base_lat = geometry.base_lat
+        base_lon = geometry.base_lon
+        
+        #slip_rates  = geometry.get_slip_rates()
+        
+        #event_element_slips = {evid:events.get_event_element_slips(evid) for evid in event_data['event_number']}
+        
+        EF = vcutils.VCGravityField(min_lat, max_lat, min_lon, max_lon, base_lat, base_lon, padding=0.08)
+
+        output_directory = 'local/'
+        field_values_directory = '{}field_values/'.format(output_directory)    
+        PRE = '{}{}_'.format(field_values_directory, evnum)
+
+        field_values_loaded = EF.load_field_values(PRE)
+
+        print '\n{} - {}:'.format(tag,evnum)
+        for city in cities:
+            lat,lon = lat_lon[city]
+            print city+'\t{:>6.3f}'.format(EF.get_field_value(lat,lon))
+            #print lat,lon
 """
 
 

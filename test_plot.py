@@ -14,6 +14,11 @@ if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
     os.remove('/home/kasey/.matplotlib/fontList.cache')
 
 #=============================================================================
+def mag_from_moment(moment):
+    return (2.0/3.0)*np.log10(moment) - 6.0
+
+
+#=============================================================================
 def bin_2d(x,y,bmin=None,bmax=None,all_vals=False) :
 
     if np.shape(x) != np.shape(y):
