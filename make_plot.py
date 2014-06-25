@@ -1,5 +1,4 @@
 import sys
-sys.path.insert(0,"/home/kasey/Okubo-test/")
 import test_plot
 reload(test_plot)
 
@@ -61,7 +60,7 @@ for k in range(3):
 """
 
 
-
+"""
 #------------------------------------------------------------------------------
 ##  ANIMATION SWITCHES & KNOBS
 #******************************
@@ -87,10 +86,11 @@ sim_file           = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 #evnum              = 55
 #out_file           = output_directory+'dg_field_'+str(evnum)+'.png'
 FIELD              = 'gravity'
-CUTOFF             = 1000.0
+#CUTOFF             = 1000.0
+CUTOFF             = None
 LENGTH             = 50.0
 FPS                = 20.0
-MAG_FILTER         = "<= 7.5"
+MAG_FILTER         = "<= 7.0"
 
 TEJON     = {'filter':(14,15)}
 SF        = {'filter':(1,2,3,4,5,6,7,8,9,10)}
@@ -98,19 +98,71 @@ LP        = {'filter':(7,8,9,10)}
 NR        = {'filter':[52]}
 LA        = {'filter':(148,30)}
 SECS      = [TEJON,SF,NR,LA]
-MAGS      = ["<= 7.9","<= 7.9","<= 6.7","<= 7.6"]
 SHOW      = 20
-
-"""
-for k in range(len(SECS)):
-    print TAGS[k]
-    vcanalysis.detailed_sim_info(sim_file,show=SHOW,section_filter=SECS[k],magnitude_filter=MAGS[k])
 """
 
-#vcanalysis.detailed_sim_info(sim_file,show=35,sortby='event_surface_rupture_length',section_filter=SF,magnitude_filter=MAGS[0])
+#el_mc_evnum = 96646
+# -------------------- Forecasting ---------------
+sim_file  = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
+
+BAJA      = {'filter':(16,17,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,83,84,123,124,125,126,56,57,70,73,149,69,92,104,105,106,107,108,109,110,111,112,113,114,115,116)}
+NORCAL    = {'filter':(1,2,3,4,5,6,7,8,9,10,36,38,39,40,41,42,43,44,45,46,47,48,50,51,138,139,140,141,142,151,159,160,161,162,163,164,165,167,168,169,170,171,172,181)}
+MAGS      = ">= 7.0"
+###############
+baja    = False
+WEIBULL = True
+###############
+if baja:
+    start_year  = 17831.6  #Baja
+    TAG         = 'baja_30k_weibull_M'+MAGS.split()[-1]
+    SECS        = BAJA
+    BETA        = 1.2
+    TAU         = 24.0
+    DT          = 30.0
+else:
+    start_year = 2380.8     #Norcal
+    TAG         = 'norcal_30k_weibull_M'+MAGS.split()[-1]
+    SECS        = NORCAL
+    BETA        = 1.2
+    TAU         = 21.5
+    DT          = 30.0
+
+EV_RANGE    = {'type':'year', 'filter':(start_year,start_year+30000)}
+vcplots.forecast_plots(sim_file, event_graph_file=None, event_sequence_graph_file=None, event_range=EV_RANGE, section_filter=SECS, magnitude_filter=MAGS, padding=0.08, fixed_dt=DT,weibull=WEIBULL,fname_tag=TAG,beta=BETA,tau=TAU)
+
+# ----------------- End Forecasting ---------------
+
+
+"""
+for k in range(len(TAGS)):
+    TAG = TAGS[k]
+    EV_RANGE    = {'type':'year', 'filter':(start_year,start_year+(k+1)*10000)}
+    vcplots.forecast_plots(sim_file, event_graph_file=None, event_sequence_graph_file=None, event_range=EV_RANGE, section_filter=SECS, magnitude_filter=MAGS, padding=0.08, fixed_dt=30.0,fname_tag=TAG)
+    #vcplots.plot_forecast(sim_file, event_graph_file=None, event_sequence_graph_file=None, event_range=EV_RANGE, section_filter=NORCAL, magnitude_filter=MAGS, padding=0.08, fixed_dt=30.0,output_file="local/"+TAG+"_forecast.png")
+"""
 
 
 
+#SF_ids = [9940,71369,53163,69060,82904]
+#for evid in SF_ids:
+#    TAG = 'sf_search'
+#    vcplots.plot_event_field(sim_file, evid, 'local', field_type='gravity', padding=0.08, cutoff=CUTOFF,tag=TAG)
+
+#vcanalysis.event_sections(sim_file,el_mc_evnum)
+
+#vcanalysis.cum_prob(sim_file, output_file, event_range=EV_RANGE, section_filter=BAJA, magnitude_filter=MAG_FILTER,plot_type=PLOT_TYPE)
+
+
+# num       year      mag       slip [m]  rupt.len [km]
+# 96646     17831.57  7.28      0.82      138.43
+#vcplots.plot_event_field(sim_file, evnum, 'local', field_type='displacement', padding=0.08, cutoff=CUTOFF,tag=TAG)
+
+#vcanalysis.detailed_sim_info(sim_file,show=20,section_filter=NORCAL,magnitude_filter=MAGS,event_range={'type':'year', 'filter':(start_year,start_year +300.0)})
+#search_evnums = [18777,67175,96646,59110,104683,10883,15374,88534,81882,58686,51930,30280]
+#for evnum in search_evnums:
+#    vcanalysis.event_sections(sim_file,evnum)
+
+"""
 bad_evid = 191433
 ###   Event numbers selected as 10 events with largest magnitude <= 7.5 on southern SAF 
 EVIDS_30    = [107556,183553,76977,33928,37557,252358,233381,225632,274396,77121,76324,138170,83894,171713,253346,4699,170663,35068,51659,67814,187742,143456,8877,9081,6348,269889,276933,150988,27209,197279]
@@ -120,6 +172,7 @@ early    = [76977,33928,37557,77121,107556]
 late     = [183553,252358,233381,225632,274396]
 #extra = [188313,184777,13688,207677]
 
+"""
 #event_range={'type':'year','filter':(2555,2655)}
 #output_directory = 'animation_test_v/'
 #vcplots.event_field_animation(sim_file, output_directory, event_range,
@@ -133,6 +186,7 @@ late     = [183553,252358,233381,225632,274396]
 #    min_mag_marker = 5.5, start_year = start_year, duration=duration,section_filter=SOUTH_SAF_SECS,
 #    force_plot=True)
 
+"""
 output_directory   = 'post_5_eq_fields/'
 
 BUFFER             = 5.0
@@ -147,11 +201,11 @@ SECS               = (SOUTH_SAF_SECS,SOUTH_SAF_SECS)
 field1dir          = 'post_5_fields/'
 field2dir          = 'pre_5_fields/'
 out_dir            = 'local/'
-TAGS               = ['tejon_alt','northridge_alt','sf_alt']
+TAGS               = ['tejon_100mgal','northridge_100mgal','sf_100mgal']
 PLOT_EVIDS         = [60019,193054,231185]
+"""
 
-
-
+"""
 center_evnum = 109382
 with VCSimData() as sim_data:
 	sim_data.open_file(sim_file)
@@ -172,7 +226,7 @@ vcplots.average_slip_surface_rupture_length(sim_file,output_files[1],event_range
 vcplots.frequency_magnitude(sim_file,output_files[2],event_range=event_range,magnitude_filter=MAG_FILTER)
 #vcplots.plot_recurrence_intervals(sim_file,output_file=output_files[3],event_range=event_range,magnitude_filter=MAG_FILTER)
 
-
+"""
 
 
 
@@ -206,12 +260,12 @@ for evnum in search_evnums:
 #    pre=(PRE1,PRE2),buffer=(BUFFER,BUFFER),section_filter=SOUTH_SAF_SECS,
 #    backslip_only=(BACK1,BACK2),eq_slip_only=(EQ1,EQ2),tag=TAG)
 
-evnums = [193054,231185,60019]
+#evnums = [193054,231185,60019]
 
-lat_lon = {'Los Angeles':(34.045536,-118.259297),'San Francisco':(37.773984,-122.418202),'Sacramento':(38.577646,-121.489948),'San Luis Obispo':(35.286790,-120.660601),'Santa Clarita':(34.388459,-118.539607),'Simi Valley':(34.266523,-118.780306),'Fort Bragg':(39.442104,-123.793432),'San Jose':(37.339686,-121.895108),'Bakersfield':(35.373937,-119.018800),'Fresno':(36.750055,-119.767782)}
+#lat_lon = {'Los Angeles':(34.045536,-118.259297),'San Francisco':(37.773984,-122.418202),'Sacramento':(38.577646,-121.489948),'San Luis Obispo':(35.286790,-120.660601),'Santa Clarita':(34.388459,-118.539607),'Simi Valley':(34.266523,-118.780306),'Fort Bragg':(39.442104,-123.793432),'San Jose':(37.339686,-121.895108),'Bakersfield':(35.373937,-119.018800),'Fresno':(36.750055,-119.767782)}
 
-tags = ['Northridge','San Francisco','Fort Tejon']
-sites = [['Santa Clarita','Simi Valley','Los Angeles'],['Fort Bragg','San Francisco','San Jose'],['Los Angeles','Bakersfield','San Luis Obispo']]
+#tags = ['Northridge','San Francisco','Fort Tejon']
+#sites = [['Santa Clarita','Simi Valley','Los Angeles'],['Fort Bragg','San Francisco','San Jose'],['Los Angeles','Bakersfield','San Luis Obispo']]
 """
 for k in range(len(evnums)):
     evnum = evnums[k]

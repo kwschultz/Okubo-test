@@ -1,6 +1,7 @@
 import sys
 sys.path.append("/home/kasey/PyVC/")
 
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -16,6 +17,15 @@ if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
 #=============================================================================
 def mag_from_moment(moment):
     return (2.0/3.0)*np.log10(moment) - 6.0
+    
+    
+#=============================================================================
+def weibull(x_array,beta,tau):
+    if len(x_array) < 2:
+        sys.exit("Input must be an array")
+    else:
+        return np.array([1-math.exp(x/float(tau)) for x in x_array])
+        
 
 
 #=============================================================================
