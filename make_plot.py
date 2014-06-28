@@ -107,28 +107,43 @@ sim_file  = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
 
 BAJA      = {'filter':(16,17,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,83,84,123,124,125,126,56,57,70,73,149,69,92,104,105,106,107,108,109,110,111,112,113,114,115,116)}
 NORCAL    = {'filter':(1,2,3,4,5,6,7,8,9,10,36,38,39,40,41,42,43,44,45,46,47,48,50,51,138,139,140,141,142,151,159,160,161,162,163,164,165,167,168,169,170,171,172,181)}
-MAGS      = ">= 7.0"
 ###############
-baja    = False
+baja    = True
 WEIBULL = True
+MAGS    = ">= 7.0"
 ###############
 if baja:
-    start_year  = 17831.6  #Baja
-    TAG         = 'baja_30k_weibull_M'+MAGS.split()[-1]
-    SECS        = BAJA
-    BETA        = 1.2
-    TAU         = 24.0
-    DT          = 30.0
+    start_year   = 17831.6  #Baja
+    TAG          = 'baja_30k_JAPAN_M'+MAGS.split()[-1]
+    SECS         = BAJA
+    DT           = 30.0
+    years_since  = 4.0
+    
+    if MAGS.split()[-1] == "7.5":
+        BETA         = 1.3
+        TAU          = 135.0
+    elif MAGS.split()[-1] == "7.0":
+        BETA         = 1.2
+        TAU          = 24.0
+        
 else:
     start_year = 2380.8     #Norcal
-    TAG         = 'norcal_30k_weibull_M'+MAGS.split()[-1]
+    TAG         = 'norcal_30k_JAPAN_M'+MAGS.split()[-1]
     SECS        = NORCAL
-    BETA        = 1.2
-    TAU         = 21.5
     DT          = 30.0
+    years_since = 108.0
+    
+    if MAGS.split()[-1] == "7.5":
+        BETA         = 1.4
+        TAU          = 109.0
+    elif MAGS.split()[-1] == "7.0":
+        BETA         = 1.2
+        TAU          = 21.5
+    
+    
 
 EV_RANGE    = {'type':'year', 'filter':(start_year,start_year+30000)}
-vcplots.forecast_plots(sim_file, event_graph_file=None, event_sequence_graph_file=None, event_range=EV_RANGE, section_filter=SECS, magnitude_filter=MAGS, padding=0.08, fixed_dt=DT,weibull=WEIBULL,fname_tag=TAG,beta=BETA,tau=TAU)
+vcplots.forecast_plots(sim_file, event_graph_file=None, event_sequence_graph_file=None, event_range=EV_RANGE, section_filter=SECS, magnitude_filter=MAGS, padding=0.08, fixed_dt=DT,weibull=WEIBULL,fname_tag=TAG,beta=BETA,tau=TAU,year_eval=years_since)
 
 # ----------------- End Forecasting ---------------
 
