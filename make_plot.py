@@ -111,13 +111,20 @@ NORCAL    = {'filter':(1,2,3,4,5,6,7,8,9,10,36,38,39,40,41,42,43,44,45,46,47,48,
 baja    = True
 WEIBULL = True
 MAGS    = ">= 7.0"
+name    = "BLAAAR"
+duration= 30000.0
+t_and_t0 = (3.0,4.0)
+#t_and_t0 = None
 ###############
+
 if baja:
     start_year   = 17831.6  #Baja
-    TAG          = 'baja_30k_JAPAN_M'+MAGS.split()[-1]
+    TAG          = 'baja_'+str(int(duration/1000.0))+'k_'+name+'_M'+MAGS.split()[-1]
     SECS         = BAJA
     DT           = 30.0
-    years_since  = 4.0
+    #years_since  = 3.0
+    years_since = 4.0
+    
     
     if MAGS.split()[-1] == "7.5":
         BETA         = 1.3
@@ -128,10 +135,11 @@ if baja:
         
 else:
     start_year = 2380.8     #Norcal
-    TAG         = 'norcal_30k_JAPAN_M'+MAGS.split()[-1]
+    TAG         = 'norcal_'+str(int(duration/1000.0))+'k_'+name+'_M'+MAGS.split()[-1]
     SECS        = NORCAL
     DT          = 30.0
     years_since = 108.0
+    #years_since = 0.0
     
     if MAGS.split()[-1] == "7.5":
         BETA         = 1.4
@@ -139,13 +147,34 @@ else:
     elif MAGS.split()[-1] == "7.0":
         BETA         = 1.2
         TAU          = 21.5
-    
+
     
 
-EV_RANGE    = {'type':'year', 'filter':(start_year,start_year+30000)}
-vcplots.forecast_plots(sim_file, event_graph_file=None, event_sequence_graph_file=None, event_range=EV_RANGE, section_filter=SECS, magnitude_filter=MAGS, padding=0.08, fixed_dt=DT,weibull=WEIBULL,fname_tag=TAG,beta=BETA,tau=TAU,year_eval=years_since)
+#EV_RANGE    = {'type':'year', 'filter':(start_year,start_year+duration)}
+#vcplots.forecast_plots(sim_file, event_graph_file=None, event_sequence_graph_file=None, event_range=EV_RANGE, section_filter=SECS, magnitude_filter=MAGS, padding=0.08, fixed_dt=DT,weibull=WEIBULL,fname_tag=TAG,beta=BETA,tau=TAU,year_eval=years_since,P_t_t0_eval=t_and_t0)
 
 # ----------------- End Forecasting ---------------
+
+
+
+
+
+# ----------------- Plotting event fields ---------------
+"""
+plot_ids = [193054,9940,96646]
+tags     = ["Northridge_200mgal","NorCal_forecast_200mgal","SoCal_forecast_200mgal"]
+CUTOFF   = None
+
+for k in range(len(plot_ids)):
+    TAG = tags[k]
+    evid= plot_ids[k]
+    
+    vcplots.plot_event_field(sim_file, evid, 'local', field_type='gravity', padding=0.08, cutoff=CUTOFF,tag=TAG,hi_res=True)
+"""
+# ----------------- END Plotting event fields -----------
+
+
+
 
 
 """
