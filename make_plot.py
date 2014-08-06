@@ -160,17 +160,20 @@ else:
 
 
 # ----------------- Plotting event fields ---------------
-"""
-plot_ids = [193054,9940,96646]
-tags     = ["Northridge_200mgal","NorCal_forecast_200mgal","SoCal_forecast_200mgal"]
+
+#plot_ids = [193054,9940,96646]
+plot_ids = [9940,9940]
+#tags     = ["Northridge_200mgal","NorCal_forecast_200mgal","SoCal_forecast_200mgal"]
+tags = ["SF_with_free_air","SF_dilatation_only"]
+freeAirs = [True,False]
 CUTOFF   = None
 
 for k in range(len(plot_ids)):
     TAG = tags[k]
     evid= plot_ids[k]
     
-    vcplots.plot_event_field(sim_file, evid, 'local', field_type='gravity', padding=0.08, cutoff=CUTOFF,tag=TAG,hi_res=True)
-"""
+    vcplots.plot_event_field(sim_file, evid, 'local/', field_type='gravity', padding=0.08, cutoff=CUTOFF,tag=TAG,free_air=freeAirs[k])
+
 # ----------------- END Plotting event fields -----------
 
 
