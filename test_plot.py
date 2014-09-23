@@ -26,6 +26,46 @@ def weibull(x_array,beta,tau):
     else:
         return np.array([1-math.exp(x/float(tau)) for x in x_array])
         
+def weibull_one(x,beta,tau):
+    return 1-np.exp( -(x/float(tau))**beta)
+
+#=============================================================================
+def fit_to_weibull(sim_file,beta_0,tau_0,event_range=None,magnitude_filter=None,section_filter=None):
+    from scipy import optimize
+    from pyvc import VCEvents,VCSimData
+    
+    fitfunc = lambda p,x: weibull_one(x,p[0],p[1])
+    errfunc = lambda p,x,y: fitfunc(p,x) - y
+    
+    p0 = [beta_0,tau_0]
+    
+    
+    with VCSimData() as sim_data:
+        # open the simulation data file
+        sim_data.open_file(sim_file)
+
+        # instantiate the vc classes passing in an instance of the VCSimData
+        # class
+        events = VCEvents(sim_data)
+        
+        event_data = events.get_event_data(['event_number', 'event_year', 'event_magnitude', 'event_range_duration'], event_range=event_range, magnitude_filter=magnitude_filter, section_filter=section_filter)
+    
+    
+    intervals = np.array([   x - event_data['event_year'][n-1]
+                    for n,x in enumerate(event_data['event_year'])
+                    if n != 0
+                ])
+    
+    cumulative = {}
+    
+    cumulative['x'] = np.sort(intervals)
+    cumulative['y'] = np.arange(float(intervals.size))/float(intervals.size)
+    
+    
+    p1,success = optimize.leastsq(errfunc,p0[:],args=(cumulative['x'],cumulative['y']))
+
+    print "\nBETA: {}".format(p1[0])
+    print "TAU : {}\n".format(p1[1])
 
 
 #=============================================================================
@@ -154,44 +194,44 @@ def get_linspaces(Xmin,Xmax,Nx,Ymin,Ymax,Ny):
     return x,y
 
 #-----------------------------------------------------------------------------
-def get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
-               DG=False,DH=False,DZ=False,DG2=False,DV=False):
+def get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,field_type='gravity'):
     
     okada   = quakelib.Okada() 
     X,Y     = get_linspaces(Xmin,Xmax,Nx,Ymin,Ymax,Ny)
     XX,YY   = np.meshgrid(X,Y)
     MAT     = np.zeros(XX.shape)
 
-    if DG:
+    if field_type == 'gravity':
         for i in range(len(XX[0])):
             for j in range(len(XX[1])):
                 loc       = quakelib.Vec2(XX[i][j],YY[i][j])
                 MAT[i][j] = okada.calc_dg(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)
-    elif DV:
+    elif field_type == 'dilat_gravity':
+        for i in range(len(XX[0])):
+            for j in range(len(XX[1])):
+                loc       = quakelib.Vec2(XX[i][j],YY[i][j])
+                MAT[i][j] = okada.calc_dg_dilat(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)
+    elif field_type == 'displacement':
+        for i in range(len(XX[0])):
+            for j in range(len(XX[1])):
+                loc       = quakelib.Vec3(XX[i][j],YY[i][j],0.0)         
+                MAT[i][j] = okada.calc_displacement_vector(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)[2]
+    else:
+        raise IOError('You must choose one of: gravity, dilat_gravity, displacement')
+    
+    """
+    elif field_type == 'potential':
         for i in range(len(XX[0])):
             for j in range(len(XX[1])):
                 loc       = quakelib.Vec3(XX[i][j],YY[i][j],0.0)
                 MAT[i][j] = okada.calc_dV(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)
-                
-    elif DG2:
-        for i in range(len(XX[0])):
-            for j in range(len(XX[1])):
-                loc       = quakelib.Vec2(XX[i][j],YY[i][j])
-                MAT[i][j] = okada.calc_dg2(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)    
-    elif DZ:
-        for i in range(len(XX[0])):
-            for j in range(len(XX[1])):
-                loc       = quakelib.Vec3(XX[i][j],YY[i][j],0.0)         
-                MAT[i][j] = okada.calc_displacement_vector(loc,c,dip,L,W,US,
-                                                           UD,UT,LAMBDA,MU)[2]
-    elif DH:
-        for i in range(len(XX[0])):
-            for j in range(len(XX[1])):
-                loc       = quakelib.Vec2(XX[i][j],YY[i][j])
-                MAT[i][j] = okada.calc_dh(loc,c,dip,L,W,US,UD,UT,LAMBDA,MU)
-    else:
-        raise IOError('You must choose one of: DG,DH,DG2,DZ')
     
+    elif field_type == 'insar':
+    #!!!!!!!!!!!!?????????????
+    #!!!!!!!!!!!!?????????????
+    #!!!!!!!!!!!!?????????????
+    
+    """
     
     return (XX,YY,MAT)
 
@@ -235,9 +275,16 @@ def get_filename(c,dip,L,W,US,UD,UT,folder,pre='none',suff='none'):
 
 #-----------------------------------------------------------------------------
 def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
-              save=False,DG2=False,DG=True,DZ=False,DH=False,
-              DIFFZ=False,DIFFG=False,CLIMITS=False,SUFFIX='none',
-              HIST=False,SHOW=False,DV=False,NOLABELS=False,tick_font=12,frame_font=12,num_ticks=7):
+              save=False,field_type='gravity',CLIMITS=False,SUFFIX='none',
+              HIST=False,SHOW=False,DV=False,NOLABELS=False,tick_font=12,
+              frame_font=12,num_ticks=7,CBAR='top',x_ticks=True):
+              
+    import time
+    
+    start = time.time()
+                        
+    # field_type options
+    # gravity, dilat_gravity, displacement, insar(soon), potential(soon)
     
     # Need to remove a cached file for Arial fonts to be used
     if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
@@ -254,81 +301,76 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
         Gravitational constant:                  G    = 0.000000000066738
     
     Vertical displacement calculations:::
-        DH: Method outlined in Okubo '92
-        DZ: Method previously implemented, from Okada
+        displacement: Method previously implemented, from Okada
+        insar (soon):        InSAR interferogram (need to learn how this is calculated)
         
     Gravity change calculations:::
-        DG2: Complete implementation of Okubo '92 method
-        DG:  Okubo '92 formulas for gravity change functionals,
-                but using in-place version of Okada's half-space 
-                deformation equations    
+        gravity:       Complete implementation of Okubo '92 method, for surface observations
+        dilat_gravity: Gravity changes only due to compression, for satellite observations    
     """ 
+    
     #--------  Choose the data to plot     vvvvvv  -----------
-    if DIFFG:
-        #        Plot difference between DG and DG2 calculations.
-        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'diff_plots',
-                                           pre='dg-dg2',suff=SUFFIX)
-
-        XX,YY,DG    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
-                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DG=True)
-        XX,YY,DG2   = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
-                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DG2=True)
-        Data        = DG - DG2   
-        FMT         = '%.2f'    
-        UNIT        = pow(10,-8)  #micro gals
-        CLABEL      = r'Gravity change $[\mu gal]$'
-    elif DIFFZ:
-        #        Plot difference between Okubo (DH) and Okada (DZ) vertical displacements
-        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'diff_plots',
-                                              pre='dz-dh',suff=SUFFIX)
-        
-        XX,YY,H     = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,
-                                    UT,LAMBDA,MU,DH=True)
-        XX,YY,Z     = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,
-                                    UT,LAMBDA,MU,DZ=True)
-        Data        = Z - H
-        FMT         = '%.1f'
-        UNIT        = pow(10,-2)  # centimeters  
-        CLABEL      = r'$\Delta z \ [cm]$'
-    elif DV:
-        XX,YY,dv    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
-                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DV=True)
-        UNIT        = 1.0 #pow(10,-4)  #GUESS?!?!?!
-        CLABEL      = r'Gravitational potential change $[units??]$'
-        FMT         = '%.4f'   
-        Data        = dv
-        filename    = 'test_dV.png'
-        
-        
-    elif not DZ and not DH:
-        #        Plot either DG or DG2
-        pre                 = ('dg2' if DG2 else 'dg')
-        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dg_plots',
-                                              pre=pre,suff=SUFFIX)
-                
-        XX,YY,Data  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
-                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DG2=DG2,DG=DG)
+    if field_type == 'gravity':
+        pre = 'dg'
+        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dg_plots',pre=pre,suff=SUFFIX)
         FMT         = '%i'
         UNIT        = pow(10,-8)  #micro gals
-        
         if fault_type == 'strikeslip':
-            CMIN,CMAX   = -50,50
+            CMIN,CMAX   = -20,20
             #plot_lab    = "Strike-slip"
         elif fault_type == 'thrust':
-            CMIN,CMAX   = -500,500
+            CMIN,CMAX   = -200,200
             #plot_lab    = "Thrust"
         elif fault_type == 'normal':
-            CMIN,CMAX   = -500,500
+            CMIN,CMAX   = -200,200
             #plot_lab    = "Normal"
         else:
-            CMIN,CMAX   = -400,400
+            CMIN,CMAX   = -200,200
             #plot_lab    = "Tensile"
-            
-        CLABEL      = r'gravity changes $[\mu gal]$'
-    else:
-        #        Plot either DZ or DH
-        pre                 = ('dh' if DH else 'dz')
+        CLABEL      = r'total gravity changes $[\mu gal]$'        
+    elif field_type == 'dilat_gravity':
+        pre = 'dg_dilat'
+        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dg_dilat_plots',pre=pre,suff=SUFFIX)
+        FMT         = '%i'
+        UNIT        = pow(10,-8)  #micro gals
+        if fault_type == 'strikeslip':
+            CMIN,CMAX   = -20,20
+            #plot_lab    = "Strike-slip"
+        elif fault_type == 'thrust':
+            CMIN,CMAX   = -20,20
+            #plot_lab    = "Thrust"
+        elif fault_type == 'normal':
+            CMIN,CMAX   = -20,20
+            #plot_lab    = "Normal"
+        else:
+            CMIN,CMAX   = -20,20
+            #plot_lab    = "Tensile"
+        CLABEL      = r'dilatational gravity changes $[\mu gal]$'
+    elif field_type == 'displacement':
+        pre = 'dz'
         filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'dz_plots',pre=pre,suff=SUFFIX)
+        if fault_type == 'strikeslip':
+            CMIN,CMAX   = -.2,.2
+            #plot_lab    = "Strike-slip"
+        elif fault_type == 'thrust':
+            CMIN,CMAX   = -2.0,2.0
+            #plot_lab    = "Thrust"
+        elif fault_type == 'normal':
+            CMIN,CMAX   = -2.0,2.0
+            #plot_lab    = "Normal"
+        else:
+            CMIN,CMAX   = -2.0,2.0
+            #plot_lab    = "Tensile"
+        FMT         = '%.1f'
+        #UNIT      = pow(10,-2)  # centimeters  
+        UNIT       = 1.0
+        CLABEL      = r'$\Delta z \ [m]$' 
+
+    
+    """
+    elif field_type == 'insar':
+        pre = 'dz'
+        filename,fault_type = get_filename(c,dip,L,W,US,UD,UT,'InSAR_plots',pre=pre,suff=SUFFIX)
 
         if fault_type == 'strikeslip':
             CMIN,CMAX   = -.2,.2
@@ -343,12 +385,26 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
             CMIN,CMAX   = -2.0,2.0
             #plot_lab    = "Tensile"
       
-        XX,YY,Data  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
-                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DH=DH,DZ=DZ)
         FMT         = '%.1f'
         #UNIT      = pow(10,-2)  # centimeters  
         UNIT       = 1.0
-        CLABEL      = r'$\Delta z \ [m]$'         
+        CLABEL      = r'$ | \Delta z | \ [m]$' 
+
+    elif field_type == 'potential':
+        XX,YY,dv    = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,
+                                 c,dip,L,W,US,UD,UT,LAMBDA,MU,DV=True)
+        UNIT        = 1.0 #pow(10,-4)  #GUESS?!?!?!
+        CLABEL      = r'Gravitational potential change $[units??]$'
+        FMT         = '%.4f'   
+        Data        = dv
+        filename    = 'test_dV.png'
+    """    
+        
+
+    XX,YY,Data  = get_matrix(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,field_type=field_type)
+
+
+
     #---------------------------------------------------------
     
     if HIST:
@@ -373,7 +429,7 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     if CLIMITS:
         plt.clim(CMIN,CMAX)
-        if DG:
+        if field_type == 'gravity' or field_type == 'dilat_gravity':
             forced_ticks  = [int(num) for num in np.linspace(CMIN,CMAX,num_ticks)]
         else:
             forced_ticks  = [num for num in np.linspace(CMIN,CMAX,num_ticks)]
@@ -385,7 +441,13 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     # Make color bar and put its label below its x-axis
     divider       = make_axes_locatable(fig_axes)
-    cbar_ax      = divider.append_axes("top", size="5%",pad=0.02)                       
+    
+    if CBAR=='top':
+        cbar_ax      = divider.append_axes("top", size="5%",pad=0.02)                       
+    else:
+        cbar_ax      = divider.append_axes("bottom", size="5%",pad=0.02)
+        
+        
     cbar            = plt.colorbar(this_img,format=FMT,
                                orientation='horizontal',cax=cbar_ax,
                                ticks=forced_ticks)
@@ -394,15 +456,24 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     # Make and position colorbar label
     if not NOLABELS:
         cbar_ax.set_xlabel(CLABEL,labelpad=-40, fontproperties=framelabelfont)
+ 
+    if CBAR=='bottom':
+        PAD = 2.5 
+        TOP = False
+        BOTTOM = True 
+    else:
+        PAD = -.5        
+        TOP = True
+        BOTTOM = False
 
-    cbar_ax.tick_params(axis='x',labelbottom='off',labeltop='on',
-                        bottom='off',top='off',right='off',left='off',pad=-0.5)
+    cbar_ax.tick_params(axis='x',labelbottom=BOTTOM,labeltop=TOP,
+                        bottom='off',top='off',right='off',left='off',pad=PAD)
 
 
     
     # Want to change outermost tick labels on colorbar
     #   from 'VALUE','-VALUE' to '>VALUE' and '<-VALUE'  
-    if not DV:  
+    if field_type != 'potential':  
         cb_tick_labs = [str(num) for num in forced_ticks]
         cb_tick_labs[0] = '<'+cb_tick_labs[0]
         cb_tick_labs[-1] = '>'+cb_tick_labs[-1]
@@ -414,7 +485,8 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     for label in cbar_ax.xaxis.get_ticklabels()+cbar_ax.yaxis.get_ticklabels():
         label.set_fontproperties(ticklabelfont)        
       
-      
+    if not x_ticks:
+        plt.setp(img_ax.xaxis.get_ticklabels(),visible=False)
       
     # Draw a projection of the fault
     W_proj      = W*np.cos(dip)  #projected width of fault due to dip angle
@@ -425,13 +497,17 @@ def cbar_plot(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
     
     # Save the plot
     if save:
-        plt.savefig(filename,dpi=350)
+        plt.savefig(filename,dpi=200)
         print '>>> plot saved: '+filename
         
     if SHOW:
         plt.show()
         
     plt.clf()
+    
+    print "{} seconds elapsed\n".format(time.time()-start)
+    
+    
 #-----------------------------------------------------------------------------
 
 def plot_for_cutoff(Xmin,Xmax,Nx,Ymin,Ymax,Ny,c,dip,L,W,US,UD,UT,LAMBDA,MU,
