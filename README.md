@@ -1,4 +1,5 @@
-Okubo-test
-==========
+VQScripts
+=============================================================
 
-Testing Okubo gravity change equations
+Testing Virtual Quake features, plot-generating scripts, etc.
+For personal use, not distributed.
