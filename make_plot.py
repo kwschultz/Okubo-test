@@ -22,30 +22,30 @@ if os.path.isfile('/home/kasey/.matplotlib/fontList.cache'):
 #M0 = 4.0*pow(10,20)
 #print test_plot.mag_from_moment(M0)
 
-"""
+
 #        DATA
 DTTF        = [1000.0,1000.0,1000.0]   # depth to top of fault (Okubo's style)
 _DIP        = [np.pi/2.0,np.pi/3.0,np.pi/6.0]
 #_DIP        = [np.pi/5.0,np.pi/10.0,np.pi/4.0]
 _L          = [10000.0,10000.0,10000.0]
 _W          = [10000.0,10000.0,10000.0]
-_C          = [DTTF[i] + _W[i]*np.sin(_DIP[i]) for i in range(len(_L))]   #meters
+_C          = [DTTF[i] + _W[i]*np.sin(_DIP[i]) for i in range(len(_L))] #meters
 _US         = [5.0,0.0,0.0]
 _UD         = [0.0,-5.0,5.0]
 _UT         = [0.0,0.0,0.0]
 _LAMBDA     = 3.2e10
 _MU         = 3.0e10
-_Xmin,_Xmax = [-30000.0,-30000.0,-30000.0],[40000.0,40000.0,40000.0]
-_Nx         = 3000.0
+_Xmin,_Xmax = [-20000.0,-20000.0,-20000.0],[30000.0,30000.0,30000.0]
+_Nx         = 300.0
 _Ymin,_Ymax = [-35000.0,-35000.0,-35000.0],[35000.0,35000.0,35000.0]
-_Ny         = 3000.0
+_Ny         = 300.0
 
 ##        SWITCHES
 #*******************
 SAVE         = True
 _CLIMITS     = True
-_suffix      = 'dg_dilat_paper'
-field_type   = 'dilat_gravity'
+_suffix      = 'compare'
+field_type   = 'gravity'
 _HIST        = False
 _SHOW        = False
 _NO_LABELS   = True
@@ -55,9 +55,9 @@ TICK_FONT    = 14
 FREE_AIR     = False
 XTICKS       = False
 #*******************
-for k in range(3):
-	test_plot.cbar_plot(_Xmin[k],_Xmax[k],_Nx,_Ymin[k],_Ymax[k],_Ny,_C[k],_DIP[k],_L[k],_W[k],_US[k],_UD[k],_UT[k],_LAMBDA,_MU,save=SAVE,CLIMITS=_CLIMITS,SUFFIX=_suffix,HIST=_HIST,SHOW=_SHOW,NOLABELS=_NO_LABELS,frame_font=FRAME_FONT,tick_font=TICK_FONT,num_ticks=NUM_TICKS,field_type=field_type,x_ticks=XTICKS,CBAR='bottom')
-"""
+#for k in range(3):
+#test_plot.cbar_plot(_Xmin[k],_Xmax[k],_Nx,_Ymin[k],_Ymax[k],_Ny,_C[k],_DIP[k],_L[k],_W[k],_US[k],_UD[k],_UT[k],_LAMBDA,_MU,save=SAVE,CLIMITS=_CLIMITS,SUFFIX=_suffix,HIST=_HIST,SHOW=_SHOW,NOLABELS=_NO_LABELS,frame_font=FRAME_FONT,tick_font=TICK_FONT,num_ticks=NUM_TICKS,field_type=field_type,x_ticks=XTICKS,CBAR='bottom')
+
 
 
 """
@@ -104,6 +104,7 @@ SHOW      = 20
 #el_mc_evnum = 96646
 # -------------------- Forecasting ---------------
 sim_file  = 'ALLCAL2_1-7-11_no-creep_dyn-05_st-20.h5'
+#sim_file  = 'events_two_fault_100k.h5'
 
 BAJA      = {'filter':(16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 56, 57, 69, 70, 73, 83, 84, 92, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 123, 124, 125, 126, 149)}
 NORCAL    = {'filter':(1,2,3,4,5,6,7,8,9,10,36,38,39,40,41,42,43,44,45,46,47,48,49,50,51,138,139,140,141,142,167,168,169,170,171,172,181)}
@@ -115,15 +116,15 @@ ALLCAL    = {'filter':sec_list}
 NAPA =  {'filter':(50,44,45,169,170,171)}
 
 ###############
-baja    = False
+baja    = True
 norcal  = False
-napa    = True
+napa    = False
 loma_napa = False
 allcal  = False
 WEIBULL = True
-MAGS    = ">= 6.0"
-name    = "PAPER"
-duration= 30000.0
+MAGS    = ">= 7.0"
+name    = "AGU"
+duration= 50000.0
 #t_and_t0 = (3.0,4.0)
 t_and_t0 = None
 ###############
@@ -252,6 +253,30 @@ For t0 = 11.00 years
 25% waiting time: 6.00 years
 50% waiting time: 13.00 years
 75% waiting time: 24.00 years
+
+
+NorCal M>7.5, 50000 years
+482 earthquakes 
+---------------------------------------
+avg interval	max interval
+98.36		507.60
+---------------------------------------
+For t0 = 108.00 years
+25% waiting time: 27.00 years
+50% waiting time: 55.00 years
+75% waiting time: 94.00 years
+
+
+Baja M>7.0, 50000 years
+1454 earthquakes 
+---------------------------------------
+avg interval	max interval
+22.11		164.61
+---------------------------------------
+For t0 = 4.00 years
+25% waiting time: 7.00 years
+50% waiting time: 16.00 years
+75% waiting time: 29.00 years
 """
     
 
@@ -275,9 +300,9 @@ vcplots.forecast_plots(sim_file, event_graph_file=None, event_sequence_graph_fil
 #plot_ids = [53043,53344]
 #tags     = ["Loma_Prieta_candidate","Napa_candidate"]
 plot_ids = [231185,96646]
-tags     = ["SF_poster","ElMC_poster"]
+tags     = ["SF_AGU","ElMC_AGU"]
 CUTOFF   = None
-FIELD    = 'dilat_gravity'
+FIELD    = 'gravity'
 LAT_LON  = False
 FRINGES  = True
 HIRES    = True
@@ -287,8 +312,14 @@ for k in range(len(plot_ids)):
     evid= plot_ids[k]
     
     vcplots.plot_event_field(sim_file, evid, 'local/', field_type=FIELD, padding=0.08, cutoff=CUTOFF,tag=TAG,lat_lon=LAT_LON,fringes=FRINGES,hi_res=HIRES)
-"""
+
+#vcanalysis.eq_info(sim_file,plot_ids)
 # ----------------- END Plotting event fields -----------
+"""
+
+# num       year      magnitude slip [m]  rupt.len [km]
+# 96646     17831.57  7.28      0.82      138.43    
+# 231185    41752.61  7.88      2.20      711.67 
 
 
 
