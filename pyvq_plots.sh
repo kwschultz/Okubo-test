@@ -14,15 +14,35 @@
 #python ../vq/pyvq/pyvq.py --model_file ../VQModels/vert_strikeslip_LeftLateral_strike270_fault_10km.txt --field_plot --field_type "gravity" --uniform_slip 5 --colorbar_max 50 --levels -50 -40 -30 -20 -10 0 10 20 30 40 50 --small_model
 
 #python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_all_cal_fault_5km_20kyr_noShocks.h5 --event_file_type 'hdf5' --field_plot --field_type "gravity" --colorbar_max 20 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20 --event_id 440
+#---------------------------------------------
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --summary 10
+
+#events_allcal_5km_250kyr.h5
+#=======================================================
+#evid	year		mag	area[km^2]	slip[m]
+#-------------------------------------------------------
+#141045	49096.9		8.052	6180.0393	7.2314
+#168015	57812.6		7.643	6478.0736	1.6837
+#3459	1893.3		7.416	5699.3955	0.8732
+#2262	1327.0		7.416	5571.9664	0.8929
+#7648	3617.9		7.408	6583.0380	0.7342
+#924	631.3		7.405	5002.1039	0.9583
+#2699	1527.4		7.400	5452.9425	0.8646
+#1484	921.8		7.392	4975.6842	0.9206
+#46307	17451.3		7.387	3134.8454	1.4352
+#3275	1809.3		7.376	4475.1209	0.9679
+#-------------------------------------------------------
+
 
 #---------------------------------------------
-python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "gravity" --colorbar_max 10 --event_id 128 --levels -10 -5 -2.5 -1.25 0 1.25 2.5 5 10
+python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "gravity" --colorbar_max 20 --event_id 141045 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20
 
-python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "dilat_gravity" --colorbar_max 10 --event_id 128 --levels -10 -5 -2.5 -1.25 0 1.25 2.5 5 10
+python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "dilat_gravity" --colorbar_max 20 --event_id 141045 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20
 
 ##python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "geoid" --colorbar_max .01 --event_id 128 --levels -.01 -.005 -.0025 -.00125 0 .00125 .0025 .005 .01 
 
-python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "insar" --event_id 128
+#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "insar" --event_id 128
 
 #python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --all_stat_plots --wc94 --min_magnitude 4
 

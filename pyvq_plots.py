@@ -4,6 +4,7 @@ from os import system
 
 TYPE = "fundamental_greens"
 # greens, fundamental_greens, single, Okubo, num_elements
+PYVQ = "../vq/pyvq/pyvq/pyvq.py"
 
 
 #  ---- Plotting Okubo Green's functions for single faults ----------------
@@ -32,13 +33,13 @@ if TYPE == "greens":
     W          = [300000, 300000, 10000, 10000, 10000, 10000]
 
     for i in range(len(L)):
-        return_value = system("python ../vq/pyvq/pyvq.py {} --field_type {} --plot_name {} --uniform_slip {} --colorbar_max {} --levels {} --rake {} --dip {} --DTTF {} --L {} --W {} --Xmin {} --Xmax {} --Ymin {} --Ymax {}".format(plot, field_type[i], plot_name[i], slip[i], cbar_max[i], levels[i], rake[i], dip[i], dttf[i], L[i], W[i], Xmin[i], Xmax[i], Ymin[i], Ymax[i]))
+        return_value = system("python {} {} --field_type {} --plot_name {} --uniform_slip {} --colorbar_max {} --levels {} --rake {} --dip {} --DTTF {} --L {} --W {} --Xmin {} --Xmax {} --Ymin {} --Ymax {}".format(PYVQ, plot, field_type[i], plot_name[i], slip[i], cbar_max[i], levels[i], rake[i], dip[i], dttf[i], L[i], W[i], Xmin[i], Xmax[i], Ymin[i], Ymax[i]))
         
         
 if TYPE == "fundamental_greens":
     plot       = "--greens"
-    plot_name  = ["strikeslip_dip90_LL_10x10km","thrust_dip30_10x10km","normal_dip60_10x10km"]
-    field_type = "displacement"
+    plot_name  = ["QUAL_strikeslip_dip90_LL_10x10km","QUAL_thrust_dip30_10x10km","QUAL_normal_dip60_10x10km"]
+    field_type = "dilat_gravity"
     slip       = [5,5,5]
     rake       = [0,90,-90]
     dip        = [90,30,60]
@@ -55,9 +56,9 @@ if TYPE == "fundamental_greens":
                       "-2 -1.5 -1 -.5 -.1 0 .1 .5 1 1.5 2"]
     elif field_type == "dilat_gravity":
         cbar_max   = [20,20,20]
-        levels     = ["-20 -15 -10 -5 -2 0 2 5 10 15 20",
-                      "-20 -15 -10 -5 -2 0 2 5 10 15 20",
-                      "-20 -15 -10 -5 -2 0 2 5 10 15 20"]
+        levels     = ["-20 -16 -12 -8 -4 0 4 8 12 16 20",
+                      "-20 -16 -12 -8 -4 0 4 8 12 16 20",
+                      "-20 -16 -12 -8 -4 0 4 8 12 16 20"]
     L          = 10000
     W          = 10000
     Nx         = 2000
@@ -74,7 +75,7 @@ if TYPE == "fundamental_greens":
     Ymax       = [15000, 20000, 20000]
 
     for i in range(len(plot_name)):
-        return_value = system("python ../vq/pyvq/pyvq.py {} --field_type {} --plot_name {} --uniform_slip {} --colorbar_max {} --levels {} --rake {} --dip {} --DTTF {} --L {} --W {} --Xmin {} --Xmax {} --Ymin {} --Ymax {} --Nx {} --Ny {}".format(plot, field_type, plot_name[i], slip[i], cbar_max[i], levels[i], rake[i], dip[i], dttf, L, W, Xmin[i], Xmax[i], Ymin[i], Ymax[i], Nx, Ny))
+        return_value = system("python {} {} --field_type {} --plot_name {} --uniform_slip {} --colorbar_max {} --levels {} --rake {} --dip {} --DTTF {} --L {} --W {} --Xmin {} --Xmax {} --Ymin {} --Ymax {} --Nx {} --Ny {}".format(PYVQ, plot, field_type, plot_name[i], slip[i], cbar_max[i], levels[i], rake[i], dip[i], dttf, L, W, Xmin[i], Xmax[i], Ymin[i], Ymax[i], Nx, Ny))
 # --------------------------------------------------------------------------
 
 
@@ -84,8 +85,8 @@ if TYPE == "fundamental_greens":
 # ---- Plotting the fields of faults with prescribed slip
 if TYPE == "single":
     plot    = "--field_plot"
-    fields  = ["gravity", "dilat_gravity"]
-    #fields = ["gravity"]
+    #fields  = ["gravity", "dilat_gravity"]
+    fields = ["dilat_gravity"]
     slip    = 5
     #models = ["single_normal_dip60_switch_fault_10000.txt","single_normal_dip60_fault_10000.txt","single_thrust_dip30_fault_10000.txt","single_vert_strikeslip_RightLateral_fault_10000.txt","single_normal_dip45_switch_fault_10000.txt","single_thrust_dip45_switch_fault_10000.txt"]
     models  = ["single_vert_strikeslip_LeftLateral_fault_10000.txt","single_normal_dip45_fault_10000.txt","single_thrust_dip45_fault_10000.txt"]
@@ -100,14 +101,10 @@ if TYPE == "single":
                     cbar_max = 500
                     levels = "-500 -400 -300 -200 -100 0 100 200 300 400 500"
             elif field == "dilat_gravity":
-                if "strikeslip" in model.split("_"):
-                    cbar_max = 15
-                    levels = "-15 -10 -5 0 5 10 15"
-                else:
-                    cbar_max = 30
-                    levels = "-30 -20 -10 0 10 20 30"
+                    cbar_max = 20
+                    levels = "-20 -16 -12 -8 -4 0 4 8 12 16 20"
                     
-            return_value = system("python ../vq/pyvq/pyvq.py {} --model_file {} --field_type {} --uniform_slip {} --colorbar_max {} --levels {} --small_model".format(plot, model, field, slip, cbar_max, levels))
+            return_value = system("python {} {} --model_file {} --field_type {} --uniform_slip {} --colorbar_max {} --levels {} --small_model".format(PYVQ, plot, model, field, slip, cbar_max, levels))
 # --------------------------------------------------------------------------
 
 
@@ -118,7 +115,8 @@ if TYPE == "single":
 if TYPE == "Okubo":
     plot    = "--field_plot"
     fields  = ["geoid","gravity", "dilat_gravity"]
-    models  = ["single_vert_strikeslip_LeftLateral_fault_10000.txt","single_thrust_dip45_fault_10000.txt","thrust_dip45_10x10km_fault_2000mElements.txt","thrust_dip45_500x300km_fault_100kmElements.txt","vert_strikeslip_LeftLateral_500x300km_fault_100kmElements.txt","single_thrust_dip45_switch_10x10km_fault_10000.txt","thrust_dip45_switch_10x10km_fault_2000mElements.txt"]
+    models  = ["~/VQModels/single_vert_strikeslip_LeftLateral_fault_10000.txt","~/VQModels/thrust_dip45_switch_500x300km_fault_100kmElements.txt","~/VQModels/vert_strikeslip_LeftLateral_500x300km_fault_100kmElements.txt","~/VQModels/thrust_dip45_switch_10x10km_fault_2000mElements.txt"]
+    #"single_thrust_dip45_fault_10000.txt","thrust_dip45_10x10km_fault_2000mElements.txt","single_thrust_dip45_switch_10x10km_fault_10000.txt"
     for model in models:
         print(model)
         for field in fields:
@@ -155,7 +153,7 @@ if TYPE == "Okubo":
             if field == "geoid" and not "500x300km" in model.split("_"):
                 print "skipped"
             else:
-                return_value = system("python ../vq/pyvq/pyvq.py {} --model_file {} --field_type {} --uniform_slip {} --colorbar_max {} --levels {} {}".format(plot, model, field, slip, cbar_max, levels, extra))
+                return_value = system("python {} {} --model_file {} --field_type {} --uniform_slip {} --colorbar_max {} --levels {} {}".format(PYVQ, plot, model, field, slip, cbar_max, levels, extra))
 # --------------------------------------------------------------------------
 
 
@@ -186,7 +184,7 @@ if TYPE == "num_elements":
                 cbar_max = 30
                 levels = "-30 -20 -10 0 10 20 30"
 
-        return_value = system("python ../vq/pyvq/pyvq.py {} --model_file {} --field_type {} --uniform_slip {} --colorbar_max {} --levels {} --small_model".format(plot, model, field, slip, cbar_max, levels))
+        return_value = system("python {} {} --model_file {} --field_type {} --uniform_slip {} --colorbar_max {} --levels {} --small_model".format(PYVQ, plot, model, field, slip, cbar_max, levels))
 
 
 
