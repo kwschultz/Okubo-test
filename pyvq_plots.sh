@@ -3,7 +3,27 @@
 # Ignore this PYTHONPATH
 #PYTHONPATH=/Users/kasey/vq/build/quakelib/python/
 
-#python ../vq/pyvq/pyvq.py --event_file events_faultIDfix_all_cal_fault_5km_10kyr_dyn0-5_BASSgen0.h5 --event_file_type 'hdf5' --all_stat_plots
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_greensTrimmed_ALLCAL2_VQmeshed_3km_EQSim_StressDrops_4kyr_24June2015.h5   --diagnostics
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_greensTrimmed_ALLCAL2_VQmeshed_3km_EQSim_StressDrops_4kyr_24June2015.h5   --event_shear_stress
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_stressTrimmed_ALLCAL2_VQmeshed_3km_EQSim_StressDrops_6kyr_22June2015.h5   --diagnostics
+
+#-----------
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ../Desktop/RUNNING/events_greensTrimmed_ALLCAL2_VQmeshed_3km_EQSim_StressDrops_4kyr_24June2015.h5 --model_file ../Desktop/RUNNING/UCERF2/ALLCAL2_VQmeshed_3km.h5 --event_id 2497 --lld_file ../TsunamiSquares/Channel_Islands.txt --field_eval
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ../Desktop/RUNNING/events_greensTrimmed_ALLCAL2_VQmeshed_3km_EQSim_StressDrops_4kyr_24June2015.h5 --event_id 1157 --field_plot --field_type displacement --model_file ../Desktop/RUNNING/UCERF2/ALLCAL2_VQmeshed_3km.h5
+
+#-----------
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ../Desktop/RUNNING/events_greensTrimmed_ALLCAL2_VQmeshed_3km_EQSim_StressDrops_4kyr_24June2015.h5 --model_file ../Desktop/RUNNING/UCERF2/ALLCAL2_VQmeshed_3km.h5 --summary 100 --use_trigger_sections 144
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_allcal_3km_noShocks_greensTrim_8June2015.h5   --max_year 4200 --diagnostics
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_May29_allcal5km_no_taper_NoShocks_20kyr_0-5dyn.h5 --plot_freq_mag 1 --use_sections 25 --model_file ../Desktop/RUNNING/UCERF2/ALLCAL2_VQmeshed_3km.h5 --max_year 2000
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_May29_allcal5km_no_taper_gen1shocks_10kyr_0-5dyn.h5   --all_stat_plots --wc94
 
 #python ../vq/pyvq/pyvq.py --model_file ../VQModels/single_vert_strikeslip_LeftLateral_fault_10000.txt --field_plot --field_type "dilat_gravity" --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 
 
@@ -13,10 +33,10 @@
 
 #python ../vq/pyvq/pyvq.py --model_file ../VQModels/vert_strikeslip_LeftLateral_strike270_fault_10km.txt --field_plot --field_type "gravity" --uniform_slip 5 --colorbar_max 50 --levels -50 -40 -30 -20 -10 0 10 20 30 40 50 --small_model
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_all_cal_fault_5km_20kyr_noShocks.h5 --event_file_type 'hdf5' --field_plot --field_type "gravity" --colorbar_max 20 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20 --event_id 440
+#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_all_cal_fault_5km_20kyr_noShocks.h5   --field_plot --field_type "gravity" --colorbar_max 20 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20 --event_id 440
 #---------------------------------------------
 
-#python ../vq/pyvq/pyvq/pyvq.py --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --summary 10
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_allcal_5km_250kyr.h5   --summary 10
 
 #events_allcal_5km_250kyr.h5
 #=======================================================
@@ -36,23 +56,23 @@
 
 
 #---------------------------------------------
-python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "gravity" --colorbar_max 20 --event_id 141045 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "gravity" --colorbar_max 20 --event_id 141045 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20
 
-python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "dilat_gravity" --colorbar_max 20 --event_id 141045 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "dilat_gravity" --colorbar_max 20 --event_id 141045 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20
 
-##python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "geoid" --colorbar_max .01 --event_id 128 --levels -.01 -.005 -.0025 -.00125 0 .00125 .0025 .005 .01 
+##python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "geoid" --colorbar_max .01 --event_id 128 --levels -.01 -.005 -.0025 -.00125 0 .00125 .0025 .005 .01 
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --field_plot --field_type "insar" --event_id 128
+#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "insar" --event_id 128
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --all_stat_plots --wc94 --min_magnitude 4
+#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --all_stat_plots --wc94 --min_magnitude 4
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5 --event_file_type 'hdf5' --all_stat_plots --wc94
+#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5   --all_stat_plots --wc94
 
 #python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --traces
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5 --event_file_type 'hdf5' --field_plot --field_type "gravity" --event_id 1414 --colorbar_max 20
+#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5   --field_plot --field_type "gravity" --event_id 1414 --colorbar_max 20
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5 --event_file_type 'hdf5' --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 7.5 --use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
+#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 7.5 --use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
 
 #--use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
 
@@ -73,9 +93,9 @@ python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --e
 
 #python ../vq/pyvq/pyvq.py --greens --field_type dilat_gravity --plot_name strikeslip_dip90_LL --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 --rake 0 --dip 90 --DTTF 1000
 
-#python ../vq/pyvq/pyvq.py --event_file events_eqsim_ucerf2_no-creep_no_taper_noAftershocks_8kyr_0-5dyn_3km.h5 --event_file_type 'hdf5' --plot_freq_mag 4
+#python ../vq/pyvq/pyvq.py --event_file events_eqsim_ucerf2_no-creep_no_taper_noAftershocks_8kyr_0-5dyn_3km.h5   --plot_freq_mag 4
 
-#python ../vq/pyvq/pyvq.py --event_file events_small_ca_6fault_50kyr_dyn0-5_BASSgen0.h5 --event_file_type 'hdf5' --plot_freq_mag 4
+#python ../vq/pyvq/pyvq.py --event_file events_small_ca_6fault_50kyr_dyn0-5_BASSgen0.h5   --plot_freq_mag 4
 
 
 #thrust_dip30_fault_10km.txt
@@ -90,22 +110,22 @@ python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --e
 # ----------------- Example usage --------------------------
 
 # Frequency magnitude plot for all events in the sim file
-# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5 --event_file_type 'hdf5' --plot_freq_mag 1
+# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5   --plot_freq_mag 1
 
 # Frequency magnitude plot including a b=1 line, only using EQs that produce slip on sections 1,2,3 (must also specify a model file)
-# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5 --event_file_type 'hdf5' --plot_freq_mag 1 --model_file path/to/model.txt --use_sections 1 2 3
+# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5   --plot_freq_mag 1 --model_file path/to/model.txt --use_sections 1 2 3
 
 # Magnitude vs Rupture Area plot for all events in the sim file
-# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5 --event_file_type 'hdf5' --plot_mag_rupt_area
+# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5   --plot_mag_rupt_area
 
 # Plot prob vs time of 3.0 < Mag < 6.0 earthquakes for all events in the sim file
-# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5 --event_file_type 'hdf5' --plot_prob_vs_t --min_magnitude 3.0 --max_magnitude 6.0
+# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5   --plot_prob_vs_t --min_magnitude 3.0 --max_magnitude 6.0
 
 # Plot conditional prob vs time of Mag > 5.5 earthquakes, and plotting a weibull curve with beta=1.2 and tau=19
-# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5 --event_file_type 'hdf5' --plot_cond_prob_vs_t --min_magnitude 5.5 --beta 1.2 --tau 19
+# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5   --plot_cond_prob_vs_t --min_magnitude 5.5 --beta 1.2 --tau 19
 
 # Plot waiting times vs time for Mag > 6.0 earthquakes
-# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5 --event_file_type 'hdf5' --plot_waiting_times --min_magnitude 6.0
+# python path/to/vq/examples/pyvq.py --event_file path/to/sim_file.h5   --plot_waiting_times --min_magnitude 6.0
 
 
 # ----- Currently working plot options (with examples) -------------------------------------------
