@@ -108,12 +108,13 @@ ordered_uniq_faults = collections.OrderedDict(sorted(uniq_faults_combined.items(
 #for key, val in ordered_uniq_faults.iteritems():
 #    print('{}\t{}'.format(val, key))
  
+print("=== Combined into "+str(len(ordered_uniq_faults.keys()))+" Unique Faults ====")
+ 
 # ============ OUTPUT THE MODIFIED MODEL ==============
-model.clear_faults()
-model.create_faults('none')
-model.compute_stress_drops(model.stressDropFactor())
-model.setStressDropFactor(model.stressDropFactor())
 new_model.insert(model)
+new_model.create_faults('none')
+new_model.compute_stress_drops(model.stressDropFactor())
+new_model.setStressDropFactor(model.stressDropFactor())
 new_model.write_file_ascii(new_file_txt)
 print("New model file written: {}".format(new_file_txt))
 
