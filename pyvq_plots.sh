@@ -19,20 +19,42 @@
 #  TO COMPARE:   
 
 #Dyn Drops vs. NO Dym Drops
-#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_20kyr_dyn1-0_stressDrops0-4_GreenLimits_NOdynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-5_stressDrops0-4_GreenLimits_NOdynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn1-0_stressDrops0-6_GreenLimits_NOdynDrops.h5    --all_stat_plots --min_num_elements 10 --max_year 10000
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-5_stressDrops0-7_NOdynDrops_rightHanded.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5  --label "static stress drops" "dynamic stress drops"  --all_stat_plots --UCERF3 --min_magnitude 6 --min_slip -10 #--min_num_elements 10
 
-#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-5_GreensLimits_VQstressDrops0-3_dynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-3_GreensLimits_VQstressDrops0-4_dynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn1-0_stressDrops0-4_GreenLimits_dynDrops.h5   --all_stat_plots --min_num_elements 10 --max_year 10000 --min_magnitude 5.5
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-5_GreensLimits_VQstressDrops0-3_dynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-3_GreensLimits_VQstressDrops0-4_dynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn1-0_stressDrops0-4_GreenLimits_dynDrops.h5   --all_stat_plots --min_num_elements 10 --max_year 10000 --min_magnitude 5.5 --UCERF2
 
-## With and without vertical tapering
-#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_TAPER_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5  --all_stat_plots --min_slip -10 --min_num_elements 0 --UCERF3 #--min_magnitude 6 
+## With and without vertical tapering, and adding horizontal tapering
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_TAPER_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5  ~/Desktop/RUNNING/UCERF3_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-8_stressDrops0-7_GreenLimits_dynDrops.h5 --all_stat_plots --min_slip -10 --min_num_elements 0 --UCERF3 #--min_magnitude 6 
 
-### UCERF2 vs UCERF3
-#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-7_stressDrops0-4_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn1-0_stressDrops0-4_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-4_stressDrops0-4_GreenLimits_dynDrops.h5  ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desk2top/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-7_stressDrops0-3_GreenLimits_dynDrops.h5 --all_stat_plots --min_num_elements 10 --min_slip -1
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-8_stressDrops0-7_GreenLimits_dynDrops.h5  ~/Desktop/RUNNING/UCERF3_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-8_stressDrops0-7_GreenLimits_dynDrops.h5  ~/Desktop/RUNNING/UCERF3_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5   --all_stat_plots --min_slip .1 --min_magnitude 5.5 --min_num_elements 10 --UCERF3
 
-#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5  --all_stat_plots --min_slip -10 --min_magnitude 6
+### No tapering UCERF3, varying fit parameters
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-7_stressDrops0-4_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn1-0_stressDrops0-4_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-4_stressDrops0-4_GreenLimits_dynDrops.h5  ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-7_stressDrops0-3_GreenLimits_dynDrops.h5 --all_stat_plots --min_num_elements 10 --min_slip .1 --UCERF3
 
-## Stress drop histograms
-python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_ASEISMIC_CUT_0-13_taper_renorm_drops0-7.txt  --block_aseismic_hist
+#### Compare a few
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-9_DynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-11_TaperRenorm_20kyr_dyn0-5_stressDrops0-8_dynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-7_dynDrops_dynTriggerFix.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-6_DynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-5_dynDrops_dynTriggerFix.h5 --all_stat_plots --min_slip -10 --min_magnitude 6 --UCERF3 --max_year 10000 --label "M_0 = 0.9" "M_0 = 0.8" "M_0 = 0.7" "M_0 = 0.6" "M_0 = 0.5" 
+
+### Improvements to UCERF3 sims
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_TAPER_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-8_stressDrops0-5_GreenLimits_NoDynDrops.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-6_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-5_stressDrops0-4_dynDrops.h5 --label "standard UCERF3" "UCERF3 + vertical tapering" "UCERF3 + horiz/vert taper renorm + aseismic cut 0.13" "+ h/v taper renorm + aseismic cut 0.13 + combined faults + dyn=0.6 + s.d. 0.5" "+ h/v taper renorm + aseismic cut 0.13 + combined faults + dyn=0.5 + s.d. 0.4" --all_stat_plots --min_num_elements 10 --min_slip .1 --UCERF3
+
+##  histograms and distribution
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_drops0-7_rightHanded.txt --block_stress_drop_hist --reference 1e6
+
+##------------------------------------------------------------------------
+### Probability table
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5 --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 5
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5 --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 6
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5 --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 7
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5 --probability_table --t0 1.0 1.4 5.8
+##------------------------------------------------------------------------
+
+##   single sim stats
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-13_TaperRenorm_50kyr_dyn0-5_stressDrops0-55_DynDrops.h5  --all_stat_plots --min_slip -10 --UCERF3    --min_magnitude 5.5
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-11_TaperRenorm_10kyr_dyn0-3_stressDrops0-6_dynDrops.h5 --all_stat_plots --min_slip -10 --UCERF3    --min_magnitude 6 --max_year 10000 --label  "s.d. factor = 0.6, dyn trigger 0.3" --dpi 100
 
 # ================================================================================================
 # ================================================================================================
