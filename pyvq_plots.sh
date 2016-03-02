@@ -6,6 +6,54 @@
 # tiny runaway event sequence
 # evid: 30478-30492
 
+##### PLOTS FROM ALIREZA TO DEBUG #####################
+# Region
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/event_East.h5 --model_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/Iran_3000.txt --probability_table --t0 3.08 11 12.17 --magnitudes 5 6 6.5 --t 1 5 10
+#-------------------------------------------
+#                   1 yr 	5 yr 	10 yr 
+#(N=21688)	M > 5	0.37	0.89	0.99
+#(N=13825)	M > 6	0.25	0.66	0.89
+#(N=5224)	M > 6.5	0.10	0.38	0.61
+# THE WHOLE REGION::::
+#                                1.0yr 	5.0yr 	10.0yr 	25.0yr 
+#(N= 13825)	M > 6.0	  t0=18.0	0.20	0.71	0.91	0.99
+#(N=  5224)	M > 6.5	  t0=18.0	0.09	0.39	0.61	0.92
+#(N=   555)	M > 7.0	  t0=34.6	0.01	0.06	0.09	0.21
+
+#
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/event_East.h5 --model_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/Iran_3000.txt --probability_table --t0 3.08 11 12.17 --magnitudes 5 6 6.5 --t 1 5 15
+#                   1.0 yr 	5.0 yr 	15.0 yr 
+#(N=21688)	M > 5.0	0.37	0.89	0.99
+#(N=13825)	M > 6.0	0.25	0.66	0.97
+#(N=5224)	M > 6.5	0.10	0.38	0.76
+#-------------------------------------------
+
+# Kun-Banan
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/event_East.h5 --model_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/Iran_3000.txt --use_faults 65 --probability_table --t0 11 11 --magnitudes 5 6 --t 1 5 10
+#-------------------------------------------
+
+# Golbaf-Sirch
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/event_East.h5 --model_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/Iran_3000.txt --probability_table --t0 18 18 34.6 --magnitudes 6 6.5 7 --t 1 5 10 25 --use_faults 54
+#
+#                                1.0yr 	5.0yr 	10.0yr 	25.0yr 
+#(N=  1594)	M > 6.0	  t0=18.0	0.04	0.16	0.28	0.55
+#(N=   551)	M > 6.5	  t0=18.0	0.01	0.04	0.09	0.18
+#(N=    44)	M > 7.0	  t0=34.6	0.00	0.00	0.00	0.02
+
+#-------------------------------------------
+
+##### ########## ----------- ######## #####################
+
+
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_single_strike_3km.txt --sweep_file sweeps_single_strike_3km.txt --model_file single_strike_3km.txt --spacetime --min_year 5 --max_year 1000 --use_faults 0
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_single_strike_3km.txt --sweep_file sweeps_single_strike_3km.txt --model_file single_strike_3km.txt --slip_time_series --elements 0 1 2 3 4 5 6 --dt .2 --max_year 1000
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_single_strike_3km.txt --sweep_file sweeps_single_strike_3km.txt  --model_file single_strike_3km.txt --num_sweeps --event_mean_slip --event_shear_stress --event_normal_stress
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_single_strike_3km.txt  --sweep_file sweeps_single_strike_3km.txt --model_file single_strike_3km.txt --all_stat_plots --block_area_hist --field_plot --field_type insar --event_id 88
+
 #python ../vq/pyvq/pyvq/pyvq.py --event_file events_ALLCAL2_VQmeshed_3km_5kyr_dyn1-3_VQstressDrops0-4_GreenLimits_doNormal_newDynamicDropsFrictionCoeff.h5   --summary 30 --min_area 3000 --min_magnitude 7.4  --model_file ~/Desktop/RUNNING/ALLCAL2_VQmeshed_3km.txt #--min_magnitude 5
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file events_ALLCAL2_VQmeshed_3km_6kyr_dyn1-5_GreensLimits_VQstressDrops0-3_dynStressDrop.h5 --diagnostics #--min_slip 0  # --event_shear_stres --zoom
@@ -18,8 +66,9 @@
 # ================================================================================================
 #  TO COMPARE:   
 
-#Dyn Drops vs. NO Dym Drops
-#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-5_stressDrops0-7_NOdynDrops_rightHanded.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5  --label "static stress drops" "dynamic stress drops"  --all_stat_plots --UCERF3 --min_magnitude 6 --min_slip -10 #--min_num_elements 10
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-5_stressDrops0-5_dynDrops_MagFix.h5  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-1_stressDrops0-5_dynDrops_MagFix.h5  --label "$\eta = 0.5$" "$\eta = 0.1$"  --all_stat_plots --UCERF3 --min_magnitude 5 --min_slip -10 # --max_year 19000 #--min_num_elements 10
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/singleFaultFlat_fault_3km_1000yr_dyn0-2_stressDrops0-5_dynDrops.h5  ~/Desktop/RUNNING/singleFaultFlat_fault_3km_1000yr_dyn0-2_stressDrops0-5_dynDrops_BASSgen1.h5 --model_file singleFaultFlat_fault_3000mElements_drops0-5.txt  --model_file_type 'text' --min_slip -10 --all_stat_plots --label "standard" "with BASS aftershocks" --pdf #--min_year 0 --max_year 50 --spacetime --use_faults 0  #
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-5_GreensLimits_VQstressDrops0-3_dynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn0-3_GreensLimits_VQstressDrops0-4_dynDrops.h5  ~/Desktop/RUNNING/events_ALLCAL2_VQmeshed_3km_10kyr_dyn1-0_stressDrops0-4_GreenLimits_dynDrops.h5   --all_stat_plots --min_num_elements 10 --max_year 10000 --min_magnitude 5.5 --UCERF2
 
@@ -31,14 +80,42 @@
 ### No tapering UCERF3, varying fit parameters
 #python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-7_stressDrops0-4_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn1-0_stressDrops0-4_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-4_stressDrops0-4_GreenLimits_dynDrops.h5  ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-7_stressDrops0-3_GreenLimits_dynDrops.h5 --all_stat_plots --min_num_elements 10 --min_slip .1 --UCERF3
 
-#### Compare a few
-#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-9_DynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-11_TaperRenorm_20kyr_dyn0-5_stressDrops0-8_dynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-7_dynDrops_dynTriggerFix.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-6_DynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-5_dynDrops_dynTriggerFix.h5 --all_stat_plots --min_slip -10 --min_magnitude 6 --UCERF3 --max_year 10000 --label "M_0 = 0.9" "M_0 = 0.8" "M_0 = 0.7" "M_0 = 0.6" "M_0 = 0.5" 
+#### Compare a few before the magnitude fix
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-9_DynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-11_TaperRenorm_20kyr_dyn0-5_stressDrops0-8_dynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-7_dynDrops_dynTriggerFix.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-6_DynDrops_dynTriggerFix.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-5_dynDrops_dynTriggerFix.h5 --all_stat_plots --min_slip -10 --min_magnitude 6 --UCERF3 --max_year 10000 --label "$\Delta M = 0.9$" "$\Delta M = 0.8$" "$\Delta M = 0.7$" "$\Delta M = 0.6$" "$\Delta M = 0.5$" --no_titles
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn1-5_stressDrops0-7_dynDrops_MagFix.h5 ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-5_stressDrops0-7_dynDrops_MagFix.h5 --all_stat_plots --min_slip -10 --min_magnitude 6 --UCERF3 --label "$\eta = 1.5$" "$\eta = 0.5$" --max_year 11000
+
+######  NEWEST  ########   ######  NEWEST  ########    TUNING
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-9_DynDrops_MagFix.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-8_DynDrops_MagFix.h5 ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-5_stressDrops0-7_dynDrops_MagFix.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_10kyr_dyn0-5_stressDrops0-6_DynDrops_MagFix.h5 ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-5_stressDrops0-5_dynDrops_MagFix.h5 --all_stat_plots --min_slip -10 --min_magnitude 6 --UCERF3 --label "$\Delta M = 0.9$" "$\Delta M = 0.8$" "$\Delta M = 0.7$" "$\Delta M = 0.6$" "$\Delta M = 0.5$" --no_titles
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn1-5_stressDrops0-7_dynDrops_MagFix.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_MagFix.h5  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_11kyr_dyn0-1_stressDrops0-7_dynDrops_MagFix.h5  --all_stat_plots --min_slip -10 --min_magnitude 6 --UCERF3 --label "$\eta \geq 1.5$" "$\eta = 0.5$" "$\eta = 0.1$" --no_titles --max_year 10000 # ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_11kyr_dyn5-0_stressDrops0-7_dynDrops_MagFix.h5 "$\eta = 5.0$"
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_MagFix.h5 --plot_prob_vs_t --plot_prob_vs_t_fixed_dt --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 6.5
+
+##    sim stats
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_MagFix.h5  --all_stat_plots --min_slip -10 --UCERF3  --min_magnitude 5.0
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-1_stressDrops0-5_dynDrops_MagFix.h5    --max_year 10000  --all_stat_plots --min_slip -10 --UCERF3  --min_magnitude 5.0 --label "$\eta = 0.1$"  # ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-5_stressDrops0-5_dynDrops_MagFix.h5 ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-3_stressDrops0-5_dynDrops_MagFix.h5    "$\eta = 0.5$" "$\eta = 0.3$"
+ 
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_drops0-5.txt --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-1_stressDrops0-5_dynDrops_MagFix.h5 --min_year 4000 --max_year 6000 --spacetime --use_faults 103
+
+##########################   SPACETIME PLOTS   ########################
+#python ../vq/pyvq/pyvq/pyvq.py --model_file  ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_current_taper_renorm_drops0-7.txt --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-1_stressDrops0-5_dynDrops_MagFix.h5  --use_faults 299   --min_year 8000 --max_year 8500 --spacetime --event_kml --event_id 5372 #--summary 30
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/event_East.h5 --model_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/Iran_3000.txt --use_faults 153 --min_year 21000 --max_year 23000 --spacetime --min_magnitude 4.8 --max_magnitude 7.2   --eps #--event_kml --event_id 10154
+
+# --use_faults 1 --event_id 9585 --min_year 20000 --max_year 23000
+
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_drops0-5.txt --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-1_stressDrops0-5_dynDrops_MagFix.h5 --event_id 140 --event_kml
+
+
+######  NEWEST  ########  ######  NEWEST  ########   TUNING
 
 ### Improvements to UCERF3 sims
 #python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_TAPER_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-8_stressDrops0-5_GreenLimits_NoDynDrops.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-6_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-5_stressDrops0-4_dynDrops.h5 --label "standard UCERF3" "UCERF3 + vertical tapering" "UCERF3 + horiz/vert taper renorm + aseismic cut 0.13" "+ h/v taper renorm + aseismic cut 0.13 + combined faults + dyn=0.6 + s.d. 0.5" "+ h/v taper renorm + aseismic cut 0.13 + combined faults + dyn=0.5 + s.d. 0.4" --all_stat_plots --min_num_elements 10 --min_slip .1 --UCERF3
 
 ##  histograms and distribution
-#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_drops0-7_rightHanded.txt --block_stress_drop_hist --reference 1e6
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReFaulted_AseismicCut0-11_taper_renorm_drops0-7.txt --block_stress_drop_hist --reference 1e6
 
 ##------------------------------------------------------------------------
 ### Probability table
@@ -47,12 +124,9 @@
 #python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5 --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 6
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5 --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 7
-
-#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_rightHanded.h5 --probability_table --t0 1.0 1.4 5.8
+########
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_MagFix.h5 --probability_table --t0 1.0 1.4 5.8 --min_slip -10
 ##------------------------------------------------------------------------
-
-##   single sim stats
-#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-13_TaperRenorm_50kyr_dyn0-5_stressDrops0-55_DynDrops.h5  --all_stat_plots --min_slip -10 --UCERF3    --min_magnitude 5.5
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-11_TaperRenorm_10kyr_dyn0-3_stressDrops0-6_dynDrops.h5 --all_stat_plots --min_slip -10 --UCERF3    --min_magnitude 6 --max_year 10000 --label  "s.d. factor = 0.6, dyn trigger 0.3" --dpi 100
 
@@ -98,15 +172,15 @@
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file events_May29_allcal5km_no_taper_gen1shocks_10kyr_0-5dyn.h5   --all_stat_plots --wc94
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/single_vert_strikeslip_LeftLateral_fault_10000.txt --field_plot --field_type "dilat_gravity" --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/single_vert_strikeslip_LeftLateral_fault_10000.txt --field_plot --field_type "dilat_gravity" --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/single_vert_strikeslip_RightLateral_fault_10000.txt --field_plot --field_type "dilat_gravity" --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/single_vert_strikeslip_RightLateral_fault_10000.txt --field_plot --field_type "dilat_gravity" --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/thrust_dip45_switch_10x10km_fault_3333mElements.txt --field_plot --field_type "dilat_gravity" --uniform_slip 5 --colorbar_max 30 --levels -30 -20 -10 0 10 20 30 --small_model
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/thrust_dip45_switch_10x10km_fault_3333mElements.txt --field_plot --field_type "dilat_gravity" --uniform_slip 5 --colorbar_max 30 --levels -30 -20 -10 0 10 20 30 --small_model
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/vert_strikeslip_LeftLateral_strike270_fault_10km.txt --field_plot --field_type "gravity" --uniform_slip 5 --colorbar_max 50 --levels -50 -40 -30 -20 -10 0 10 20 30 40 50 --small_model
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/vert_strikeslip_LeftLateral_strike270_fault_10km.txt --field_plot --field_type "gravity" --uniform_slip 5 --colorbar_max 50 --levels -50 -40 -30 -20 -10 0 10 20 30 40 50 --small_model
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_all_cal_fault_5km_20kyr_noShocks.h5   --field_plot --field_type "gravity" --colorbar_max 20 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20 --event_id 440
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_all_cal_fault_5km_20kyr_noShocks.h5   --field_plot --field_type "gravity" --colorbar_max 20 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20 --event_id 440
 #---------------------------------------------
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file events_allcal_5km_250kyr.h5   --summary 10
@@ -133,42 +207,47 @@
 
 #python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "dilat_gravity" --colorbar_max 20 --event_id 141045 --levels -20 -10 -5 -2.5 -1 0 1 2.5 5 10 20
 
-##python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "geoid" --colorbar_max .01 --event_id 128 --levels -.01 -.005 -.0025 -.00125 0 .00125 .0025 .005 .01 
+##python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "geoid" --colorbar_max .01 --event_id 128 --levels -.01 -.005 -.0025 -.00125 0 .00125 .0025 .005 .01 
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "insar" --event_id 128
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --field_plot --field_type "insar" --event_id 128
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --all_stat_plots --wc94 --min_magnitude 4
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --all_stat_plots --wc94 --min_magnitude 4
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5   --all_stat_plots --wc94
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5   --all_stat_plots --wc94
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --traces
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --traces
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5   --field_plot --field_type "gravity" --event_id 1414 --colorbar_max 20
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_norcal_fault_5km_5kyr_dyn0-5_BASSgen0.h5   --field_plot --field_type "gravity" --event_id 1414 --colorbar_max 20
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 7.5 --use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --event_file events_allcal_5km_250kyr.h5   --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 7.5 --use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
 
 #--use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_3000.h5 --traces --use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_3000.h5 --traces --use_sections 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140
+
+#--------------------------------------------- IRAN
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/event_East.h5 --model_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/Iran_3000.txt --use_trigger_sections 1 --min_magnitude 6.5 --plot_waiting_times # --fit_weibull  --plot_prob_vs_t  --plot_cond_prob_vs_t --plot_recurrence   
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/event_East.h5 --model_file ~/Dropbox/UCD/RESEARCH/Iranian_Collab/Simulations/Iran_3000.txt --traces   #--probability_table --t0 0.0 5.0 5.1  #--plot_prob_vs_t  --plot_cond_prob_vs_t --plot_waiting_times  --fit_weibull --dpi 150  # --plot_recurrence  
 
 #---------------------------------------------
 
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/thrust_dip45_switch_10x10km_fault_3333mElements.txt --field_plot --field_type "gravity" --uniform_slip 5 --colorbar_max 500 --levels -500 -400 -300 -200 -100 0 100 200 300 400 500 --small_model
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/thrust_dip45_switch_10x10km_fault_3333mElements.txt --field_plot --field_type "gravity" --uniform_slip 5 --colorbar_max 500 --levels -500 -400 -300 -200 -100 0 100 200 300 400 500 --small_model
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --traces
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/allcal_fault_5000.h5 --traces
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/thrust_dip45_switch_500x300km_fault_50000mElements.txt --field_plot --field_type "geoid" --uniform_slip 10 --colorbar_max .05 --levels -.05 -.04 -.03 -.02 -.01 0 .01 .02 .03 .04 .05 --small_model
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/thrust_dip45_switch_500x300km_fault_50000mElements.txt --field_plot --field_type "geoid" --uniform_slip 10 --colorbar_max .05 --levels -.05 -.04 -.03 -.02 -.01 0 .01 .02 .03 .04 .05 --small_model
 
-#python ../vq/pyvq/pyvq.py --model_file ../VQModels/vert_strikeslip_LeftLateral_500x300km_fault_100kmElements.txt --field_plot --field_type "geoid" --uniform_slip 10 --colorbar_max .01 --levels -.01 -.0075 -.005 -.0025 0 .0025 .005 .0075 .01 --small_model
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ../VQModels/vert_strikeslip_LeftLateral_500x300km_fault_100kmElements.txt --field_plot --field_type "geoid" --uniform_slip 10 --colorbar_max .01 --levels -.01 -.0075 -.005 -.0025 0 .0025 .005 .0075 .01 --small_model
 
-#python ../vq/pyvq/pyvq.py --greens --field_type "gravity" --plot_name "strikeslip_dip90_LL" --uniform_slip 5 --colorbar_max 50 --levels -50 -40 -30 -20 -10 0 10 20 30 40 50 --rake 0 --dip 90 --DTTF 1000
+#python ../vq/pyvq/pyvq/pyvq.py --greens --field_type "gravity" --plot_name "strikeslip_dip90_LL" --uniform_slip 5 --colorbar_max 50 --levels -50 -40 -30 -20 -10 0 10 20 30 40 50 --rake 0 --dip 90 --DTTF 1000 --save_greens
 
-#python ../vq/pyvq/pyvq.py --greens --field_type dilat_gravity --plot_name strikeslip_dip90_LL --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 --rake 0 --dip 90 --DTTF 1000
+#python ../vq/pyvq/pyvq/pyvq.py --greens --field_type dilat_gravity --plot_name strikeslip_dip90_LL --uniform_slip 5 --colorbar_max 15 --levels -15 -10 -5 0 5 10 15 --rake 0 --dip 90 --DTTF 1000
 
-#python ../vq/pyvq/pyvq.py --event_file events_eqsim_ucerf2_no-creep_no_taper_noAftershocks_8kyr_0-5dyn_3km.h5   --plot_freq_mag 4
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_eqsim_ucerf2_no-creep_no_taper_noAftershocks_8kyr_0-5dyn_3km.h5   --plot_freq_mag 4
 
-#python ../vq/pyvq/pyvq.py --event_file events_small_ca_6fault_50kyr_dyn0-5_BASSgen0.h5   --plot_freq_mag 4
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_small_ca_6fault_50kyr_dyn0-5_BASSgen0.h5   --plot_freq_mag 4
 
 
 #thrust_dip30_fault_10km.txt
