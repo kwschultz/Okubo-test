@@ -3,8 +3,17 @@
 # Ignore this PYTHONPATH
 #PYTHONPATH=/Users/kasey/vq/build/quakelib/python/
 
-# tiny runaway event sequence
-# evid: 30478-30492
+
+## ========= Returning VQ to VC-type CA model ===============
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --sweep_file ~/Desktop/RUNNING/sweeps_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --model_file ~/VQModels/singleFaultFlat_dip90_fault_3000mElements_drops0-5.txt --fault_time_series --max_year 5000 --use_faults 0 --dt 1.0 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --sweep_file ~/Desktop/RUNNING/sweeps_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --model_file ~/VQModels/singleFaultFlat_dip90_fault_3000mElements_drops0-5.txt --diagnostics --max_year 5000
+
+
+python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_March12_taper_renorm_drops0.5.txt --fault_length_distribution --no_titles
+
+
 
 ##### PLOTS FROM ALIREZA TO DEBUG #####################
 # Region
@@ -45,8 +54,78 @@
 ##### ########## ----------- ######## #####################
 
 
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_Elsinore_Only_no_taper_ReFaulted_ReSectioned_ReElemented_drops0-5.h5 --traces
 
-#python ../vq/pyvq/pyvq/pyvq.py --event_file events_single_strike_3km.txt --sweep_file sweeps_single_strike_3km.txt --model_file single_strike_3km.txt --spacetime --min_year 5 --max_year 1000 --use_faults 0
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file events_single_strike_3km.txt --sweep_file sweeps_single_strike_3km.txt --model_file single_strike_3km.txt --fault_time_series --max_year 1000 --use_faults 0
+
+
+##### COMPARING RE-FAULTED STRIKE-FIXED to NON RE-FAULTED STANDARD UCERF3 both with ASEISMIC CUT 011
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_Standard_AseismicCut_0-11_TaperRenorm_10kyr_dyn0-3_stressDrops0-5_DynDrops.h5  ~/Desktop/RUNNING/UCERF3_ReIndexed_AseismicCut_0-11_March12_TaperRenorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5  --label "Original UCERF3" "Re-Faulted and Re-Aligned UCERF3"  --all_stat_plots --UCERF3 --min_magnitude 5 --min_slip -10  --max_year 10000  --no_titles --min_magnitude 6 #--min_num_elements 10
+
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/singleFaultFlat_fault_dip90_3km_114kyr_dyn0-3_stressDrops0-5_dynDrops.h5 --model_file ~/VQModels/singleFaultFlat_dip90_fault_3000mElements_drops0-5.txt --fault_time_series --use_faults 0 --dt 100 --label "Single flat fault" --max_year 100000
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/singleFaultFlat_fault_dip90_3km_100kr_dyn0-1_stressDrops0-5_dynDrops.h5 --model_file ~/VQModels/singleFaultFlat_dip90_fault_3000mElements_drops0-5.txt --event_id 310 --event_movie
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/singleFaultFlat_fault_dip90_3km_100kr_dyn0-1_stressDrops0-5_dynDrops.h5 --model_file ~/VQModels/singleFaultFlat_dip90_fault_3000mElements_drops0-5.txt --event_id 311 --event_movie
+
+
+############ Begin   FAULT CORRELATIONS   ################################
+
+## ------------ LA BASIN AND MOJAVE FAULTS ISOLATED -------------------
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5  --all_stat_plots --min_slip -10 --UCERF3  --min_magnitude 5 --label "LA Basin and Mojave Faults only"
+
+# --------- Look at the effect of tapering on the stats for Mojave EQs in the LA Basin + Mojave sims
+#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5  --all_stat_plots --min_slip -10 --UCERF3  --min_magnitude 5 --label "no taper" "tapering" "renormalized tapering"
+
+# ------- Make a time series plot and save the time series for Mojave faults for each taper type
+## 10 million year sim to try and find equilibrium
+##### First, taper
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_10Myr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_drops0-5.h5 --fault_time_series --use_faults 91 92 723 --dt 500 --label "Johnson Valley" "Kickapoo" "Homestead Valley" --max_year 10000000 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_10Myr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_drops0-5.h5 --fault_time_series --use_faults 152 108 185 226 236 240 122 109 113 --dt 500 --label "Raymond" "Hollywood" "Santa Monica Bay" "Santa Monica" "Whittier" "Puente Hills" "Newport-Inglewood" "Palos Verdes" "Sierra Madre" --max_year 10000000 --full_time_range
+
+##### Next, taper_renorm  
+##!!!!!!!!!!!!!!!!
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_10Myr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_drops0-5.h5 --fault_time_series --use_faults 91 92 723 --dt 500 --label "Johnson Valley" "Kickapoo" "Homestead Valley" --max_year 10000000 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_10Myr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_drops0-5.h5 --fault_time_series --use_faults 152 108 185 226 236 240 122 109 113 --dt 500 --label "Raymond" "Hollywood" "Santa Monica Bay" "Santa Monica" "Whittier" "Puente Hills" "Newport-Inglewood" "Palos Verdes" "Sierra Madre" --max_year 10000000 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_drops0-5.h5 --fault_time_series --use_faults 91 92 723 --dt 10 --label "Johnson Valley" "Kickapoo" "Homestead Valley" --max_year 200000 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_drops0-5.h5 --fault_time_series --use_faults 91 92 723 --dt 10 --label "Johnson Valley" "Kickapoo" "Homestead Valley" --max_year 200000 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_drops0-5.h5 --fault_time_series --use_faults 91 92 723 --dt 10 --label "Johnson Valley" "Kickapoo" "Homestead Valley" --max_year 200000 --full_time_range
+
+
+# ------- Make a time series plot and save the time series for LA Basin faults for each taper type
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_drops0-5.h5 --fault_time_series --use_faults 152 108 185 226 236 240 122 109 113 --dt 10 --label "Raymond" "Hollywood" "Santa Monica Bay" "Santa Monica" "Whittier" "Puente Hills" "Newport-Inglewood" "Palos Verdes" "Sierra Madre" --max_year 200000 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_drops0-5.h5 --fault_time_series --use_faults 152 108 185 226 236 240 122 109 113 --dt 10 --label "Raymond" "Hollywood" "Santa Monica Bay" "Santa Monica" "Whittier" "Puente Hills" "Newport-Inglewood" "Palos Verdes" "Sierra Madre" --max_year 200000 --full_time_range
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.h5 --model_file ~/VQModels/UCERF3/UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_drops0-5.h5 --fault_time_series --use_faults 152 108 185 226 236 240 122 109 113 --dt 10 --label "Raymond" "Hollywood" "Santa Monica Bay" "Santa Monica" "Whittier" "Puente Hills" "Newport-Inglewood" "Palos Verdes" "Sierra Madre" --max_year 200000 --full_time_range
+
+
+## ========= Make fault group averaged time series
+#python ../vq/pyvq/pyvq/pyvq.py --fault_group_time_series --group2_files fault_91_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_92_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_723_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle --group1_files fault_109_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_113_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_122_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_240_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_108_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_152_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_185_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_226_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_236_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_renorm_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle --label  "LA Basin faults" "Mojave faults"
+
+#python ../vq/pyvq/pyvq/pyvq.py --fault_group_time_series --group2_files fault_91_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_92_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_723_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle --group1_files fault_109_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_113_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_122_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_240_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_108_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_152_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_185_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_226_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_236_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_taper_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle --label "LA Basin faults"  "Mojave faults"
+
+
+#python ../vq/pyvq/pyvq/pyvq.py --fault_group_time_series --group2_files fault_91_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_92_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_723_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle --group1_files fault_109_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_113_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_122_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_240_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_108_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_152_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_185_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_226_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle fault_236_timeseries_standardized_yearMin0_yearMax200000_combined_dt10.0yrs_UCERF3_EQSim_ReIndexed_LA_Basin_and_Mojave_AseismicCut_0-11_none_200kyr_dyn0-3_stressDrops0-5_DynDrops.pickle --label  "LA Basin faults" "Mojave faults"
+
+
+
+## ------------ FULL UCERF3 SIM -------------------
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_ReIndexed_AseismicCut0-11_TaperRenorm_100kyr_dyn0-5_stressDrops0-7_DynDrops.h5 --model_file ~/Desktop/RUNNING/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_taper_renorm_drops0-7.h5 --fault_time_series --max_year 80000 --use_faults 91 92 723 --dt 1.0 --label "Johnson Valley" "Kickapoo" "Homestead Valley"
+
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_ReIndexed_AseismicCut0-11_TaperRenorm_100kyr_dyn0-5_stressDrops0-7_DynDrops.h5 --model_file ~/Desktop/RUNNING/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_taper_renorm_drops0-7.h5 --fault_time_series --max_year 80000 --use_faults 152 108 185 226 236 240 122 109 113 --dt 1.0 --label "Raymond" "Hollywood" "Santa Monica Bay" "Santa Monica" "Whittier" "Puente Hills" "Newport-Inglewood" "Palos Verdes" "Sierra Madre"
+############@###########################################################
+
+
+
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file events_single_strike_3km.txt --sweep_file sweeps_single_strike_3km.txt --model_file single_strike_3km.txt --slip_time_series --elements 0 1 2 3 4 5 6 --dt .2 --max_year 1000
 
@@ -92,8 +171,6 @@
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_MagFix.h5 --plot_prob_vs_t --plot_prob_vs_t_fixed_dt --plot_cond_prob_vs_t --plot_waiting_times --min_magnitude 6.5
 
-##    sim stats
-#python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_REfaulted_AseismicCut0-11_TaperRenorm_50kyr_dyn0-5_stressDrops0-7_DynDrops_MagFix.h5  --all_stat_plots --min_slip -10 --UCERF3  --min_magnitude 5.0
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-1_stressDrops0-5_dynDrops_MagFix.h5    --max_year 10000  --all_stat_plots --min_slip -10 --UCERF3  --min_magnitude 5.0 --label "$\eta = 0.1$"  # ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_10kyr_dyn0-5_stressDrops0-5_dynDrops_MagFix.h5 ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-3_stressDrops0-5_dynDrops_MagFix.h5    "$\eta = 0.5$" "$\eta = 0.3$"
  
