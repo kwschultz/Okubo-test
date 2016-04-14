@@ -11,8 +11,9 @@
 #python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --sweep_file ~/Desktop/RUNNING/sweeps_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --model_file ~/VQModels/singleFaultFlat_dip90_fault_3000mElements_drops0-5.txt --diagnostics --max_year 5000
 
 
-python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_March12_taper_renorm_drops0.5.txt --fault_length_distribution --no_titles
+#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_April12_taper_renorm_drops0-5.txt --fault_length_distribution --no_titles
 
+python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-3_stressDrops0-5_dynDrops_MagFix.h5 --all_stat_plots --UCERF3 --no_titles --label "$\eta = 0.3, \ \Delta M = 0.5$"
 
 
 ##### PLOTS FROM ALIREZA TO DEBUG #####################
