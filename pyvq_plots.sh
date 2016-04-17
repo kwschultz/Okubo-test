@@ -10,6 +10,14 @@
 
 #python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/events_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --sweep_file ~/Desktop/RUNNING/sweeps_singleFaultFlat_fault_dip90_3km_5kr_dyn0-1_stressDrops0-5_NoDynDrops_RUPTURE_DEV.txt --model_file ~/VQModels/singleFaultFlat_dip90_fault_3000mElements_drops0-5.txt --diagnostics --max_year 5000
 
+# Bay Area fault sections for probabilities
+#--use_sections 1902 1903 1904 1905 1906 1907 1908 1909 1910 1911 1912 1913 1914 1915 1916 1917 1918 1919 1920 1921 1922 1923 1924 1925 1926 1927 1928 1929 1930 1931 1932 1611 1612 1613 1614 1615 1616 1617 1618 1620 1621 1622 1623 1624 1625 1626 1627 1628 1629 2130 2131 2132 2133 2134 2135 2136 2137 2138 2139 2140 2141 2142 2143 2144 2145 2146 2147 2148 2149 2150 2151 2152 1551 1552 1553 1554 1555 1556 1557 1558 1559 1560 1561 1723 1724 1725 1726 1727 1728 1729 1730 1731 1732 1733 1734 1725 1736 825 826 827 828 829 830 831 832 833 834 835 836 837 838 839 840 841 842 1331 1332 1333 1334 1335 1336 1337 1338 178 179 180 181 182 183 184 185 2381 2382 2383 2384 2385 2386 2387 2388 2389
+
+
+
+
+
+
 
 #python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_April12_taper_renorm_drops0-5.txt --fault_length_distribution --no_titles
 
