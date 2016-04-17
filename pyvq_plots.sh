@@ -13,7 +13,7 @@
 
 #python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_April12_taper_renorm_drops0-5.txt --fault_length_distribution --no_titles
 
-python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-3_stressDrops0-5_dynDrops_MagFix.h5 --all_stat_plots --UCERF3 --no_titles --label "$\eta = 0.3, \ \Delta M = 0.5$"
+#python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_AseismicCut0-11_taper_renorm_50kyr_dyn0-3_stressDrops0-5_dynDrops_MagFix.h5 --all_stat_plots --UCERF3 --no_titles --label "$\eta = 0.3, \ \Delta M = 0.5$"
 
 
 ##### PLOTS FROM ALIREZA TO DEBUG #####################
@@ -193,7 +193,7 @@ python ../vq/pyvq/pyvq/pyvq.py --event_file ~/Desktop/RUNNING/UCERF3_ReFaulted_A
 #python ../vq/pyvq/pyvq/pyvq.py --event_file  ~/Desktop/RUNNING/UCERF3_VQmeshed_3km_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_TAPER_10kyr_dyn0-8_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-8_stressDrops0-5_GreenLimits_NoDynDrops.h5  ~/Desktop/RUNNING/UCERF3_REfaulted_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-6_stressDrops0-5_GreenLimits_dynDrops.h5 ~/Desktop/RUNNING/UCERF3_REfaulted_VQmeshed_ASEISMIC_CUT_0-13_TaperRenorm_10kyr_dyn0-5_stressDrops0-4_dynDrops.h5 --label "standard UCERF3" "UCERF3 + vertical tapering" "UCERF3 + horiz/vert taper renorm + aseismic cut 0.13" "+ h/v taper renorm + aseismic cut 0.13 + combined faults + dyn=0.6 + s.d. 0.5" "+ h/v taper renorm + aseismic cut 0.13 + combined faults + dyn=0.5 + s.d. 0.4" --all_stat_plots --min_num_elements 10 --min_slip .1 --UCERF3
 
 ##  histograms and distribution
-#python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReFaulted_AseismicCut0-11_taper_renorm_drops0-7.txt --block_stress_drop_hist --reference 1e6
+python ../vq/pyvq/pyvq/pyvq.py --model_file ~/VQModels/UCERF3/UCERF3_VQmeshed_from_EQSIM_ReIndexed_AseismicCut_0-11_April12_taper_renorm_drops0-5.txt --block_stress_drop_hist --reference 1e6
 
 ##------------------------------------------------------------------------
 ### Probability table
